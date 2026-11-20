@@ -21,16 +21,25 @@ import {
   Send,
   User,
   Calendar,
-  Check
+  Check,
+  Star,
+  Gift,
+  Tag,
+  Percent,
+  Copy,
+  ExternalLink
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useAppThemeLanguage } from '../context/ThemeLanguageContext';
-import { doctorsOldTower, newTowerSpecialties, siteImages } from '../data/siteData';
+import { doctorsOldTower, newTowerSpecialties, siteImages, elEzabyPharmacy } from '../data/siteData';
 import { Tabs } from '../components/ui/Tabs';
 import { Select, SelectOption } from '../components/ui/Select';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
+import { SponsoredCarousel } from '../components/SponsoredCarousel';
+import { BookingModal } from '../components/BookingModal';
+import { DoctorProfile } from '../types';
 
 export const DoctorsTowerPage: React.FC = () => {
   const { language, t } = useAppThemeLanguage();
@@ -40,11 +49,15 @@ export const DoctorsTowerPage: React.FC = () => {
   const [oldSpecialtyFilter, setOldSpecialtyFilter] = useState<string>('all');
   const [oldSearchQuery, setOldSearchQuery] = useState('');
 
+  // Booking Modal State
+  const [selectedBookingDoctor, setSelectedBookingDoctor] = useState<DoctorProfile | null>(null);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
   // New Tower filter states (kept to maintain identical UI layout)
   const [newSpecialtyFilter, setNewSpecialtyFilter] = useState<string>('all');
   const [newSearchQuery, setNewSearchQuery] = useState('');
 
-  // Doctor Registration Modal state
+  // Doctor Registration Modal state for New Tower
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [doctorName, setDoctorName] = useState('');
   const [doctorSpecialty, setDoctorSpecialty] = useState('');
@@ -57,6 +70,7 @@ export const DoctorsTowerPage: React.FC = () => {
     hours?: string;
   }>({});
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [copiedPromo, setCopiedPromo] = useState(false);
 
   // Tower tabs
   const towerTabs = [
@@ -121,6 +135,18 @@ export const DoctorsTowerPage: React.FC = () => {
     setTimeout(() => {
       setToastMessage(null);
     }, 4500);
+  };
+
+  const handleCopyPharmacyPromo = () => {
+    navigator.clipboard.writeText('SHUBRA10');
+    setCopiedPromo(true);
+    setTimeout(() => setCopiedPromo(false), 2500);
+    showToast(language === 'ar' ? 'تم نسخ كود خصم صيدلية العزبي: SHUBRA10' : 'Copied El-Ezaby Pharmacy Promo Code: SHUBRA10');
+  };
+
+  const handleOpenBooking = (doctor: DoctorProfile) => {
+    setSelectedBookingDoctor(doctor);
+    setIsBookingModalOpen(true);
   };
 
   const handleRegisterSubmit = (e: React.FormEvent) => {
@@ -259,8 +285,8 @@ export const DoctorsTowerPage: React.FC = () => {
                 </div>
                 <div className="text-xs text-neutral-500">
                   {language === 'ar' 
-                    ? 'يضم عيادات ومعامل الأمير ونخبة أطباء الباطنة والجراحة والنساء والأنف والأذن والعلاج الطبيعي'
-                    : 'Features Al-Amir clinics & labs, general surgery, OB/GYN, and physiotherapy center'}
+                    ? 'يضم صيدلية العزبي، عيادات ومعامل الأمير، ونخبة أطباء الباطنة والجراحة والنساء والأنف والأذن والعلاج الطبيعي'
+                    : 'Features El-Ezaby Pharmacy, Al-Amir clinics & labs, general surgery, OB/GYN, and physiotherapy center'}
                 </div>
               </div>
             </div>
@@ -270,7 +296,104 @@ export const DoctorsTowerPage: React.FC = () => {
             </Badge>
           </div>
 
-          {/* Filters: Specialty Dropdown + Search Box */}
+          {/* 1. SPONSORED AUTO-SWIPING CAROUSEL (Directly above the filters) */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between px-1">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#8e8672]" />
+                <h3 className="text-sm font-bold text-[#12110f] dark:text-white">
+                  {language === 'ar' ? 'أبرز الأطباء والعروض الموصى بها (إعلانات ممولة)' : 'Featured Specialists & Offers (Sponsored Ads)'}
+                </h3>
+              </div>
+              <span className="text-[11px] text-neutral-400">
+                {language === 'ar' ? 'تبديل تلقائي كل 4 ثوانٍ' : 'Auto-swipes every 4s'}
+              </span>
+            </div>
+
+            <SponsoredCarousel
+              sponsoredDoctors={doctorsOldTower.filter((d) => d.isSponsored)}
+              pharmacy={elEzabyPharmacy}
+              onBookDoctor={handleOpenBooking}
+            />
+          </div>
+
+          {/* 2. DEDICATED PHARMACY SECTION: EL-EZABY PHARMACY */}
+          <div className="p-6 rounded-3xl bg-gradient-to-br from-emerald-500/10 via-white dark:via-[#1c1b18] to-emerald-500/5 border-2 border-emerald-500/30 shadow-md">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              
+              {/* Pharmacy Image */}
+              <div className="md:col-span-4 flex items-center justify-center">
+                <div className="relative w-full max-w-[240px] h-36 rounded-2xl overflow-hidden border-2 border-emerald-500/40 shadow-sm bg-white">
+                  <img
+                    src={elEzabyPharmacy.image}
+                    alt={elEzabyPharmacy.name[language]}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-bold shadow-sm">
+                    {elEzabyPharmacy.floor[language]}
+                  </div>
+                </div>
+              </div>
+
+              {/* Pharmacy Info & Promo Banner */}
+              <div className="md:col-span-8 space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="emerald" size="sm">
+                    {language === 'ar' ? 'صيدلية الصرح الطبي الرئيسية' : 'Flagship Medical Pharmacy'}
+                  </Badge>
+                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/25 flex items-center gap-1">
+                    <Percent className="w-3 h-3" />
+                    <span>{language === 'ar' ? 'خصم 10% لمرضى الموقع' : '10% Discount for Hub Users'}</span>
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-black text-[#12110f] dark:text-[#f6f6f4]">
+                    {elEzabyPharmacy.name[language]}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-300 mt-1 leading-relaxed">
+                    {elEzabyPharmacy.description[language]}
+                  </p>
+                </div>
+
+                {/* Features Pills */}
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {elEzabyPharmacy.features[language].map((feat, fIdx) => (
+                    <span
+                      key={fIdx}
+                      className="px-2.5 py-0.5 rounded-lg text-[11px] font-semibold bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20"
+                    >
+                      ✓ {feat}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Action Row */}
+                <div className="pt-2 flex flex-wrap items-center gap-3">
+                  <a
+                    href={`tel:${elEzabyPharmacy.hotline}`}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all active:scale-95"
+                  >
+                    <Phone className="w-4 h-4" />
+                    <span>{language === 'ar' ? 'الخط الساخن: ' : 'Call Hotline: '}{elEzabyPharmacy.hotline}</span>
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={handleCopyPharmacyPromo}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs font-bold transition-all"
+                  >
+                    <Tag className="w-3.5 h-3.5" />
+                    <span>{language === 'ar' ? 'كود الخصم: ' : 'Promo Code: '}<strong>{elEzabyPharmacy.promoCode}</strong></span>
+                    {copiedPromo ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* 3. FILTERS: Specialty Dropdown + Search Box */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Select
               label={language === 'ar' ? 'تصفية حسب التخصص الطبي:' : 'Filter by Medical Specialty:'}
@@ -296,7 +419,7 @@ export const DoctorsTowerPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Doctors Cards Grid */}
+          {/* 4. ENHANCED DOCTORS CARDS GRID */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredOldTowerDoctors.map((doc, idx) => (
               <motion.div
@@ -307,66 +430,113 @@ export const DoctorsTowerPage: React.FC = () => {
                 className="p-6 rounded-3xl bg-white dark:bg-[#1b1a17] border border-[#e2dfd8] dark:border-[#33312b] shadow-card-soft dark:shadow-card-dark hover:shadow-xl hover:border-[#8e8672]/60 transition-all duration-300 flex flex-col justify-between space-y-5"
               >
                 <div className="space-y-4">
-                  {/* Doctor Card Top */}
+                  {/* Doctor Card Top: Photo + Rating + Floor Badge */}
                   <div className="flex items-start justify-between gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-[#8e8672]/15 text-[#8e8672] dark:text-[#d0c8bd] flex items-center justify-center shrink-0">
-                      <Stethoscope className="w-6 h-6" />
+                    <div className="flex items-center gap-3">
+                      {/* Doctor Photo from new image with circular/rounded framing */}
+                      <div className="relative">
+                        <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden border-2 border-[#8e8672]/40 bg-neutral-100 dark:bg-neutral-800 shadow-sm shrink-0">
+                          <img
+                            src={doc.image || '/data/doctors-tower.jpg'}
+                            alt={doc.name[language]}
+                            className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300"
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src = '/data/doctors-tower.jpg';
+                            }}
+                          />
+                        </div>
+                        {doc.isSponsored && (
+                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-amber-500 rounded-full flex items-center justify-center text-white text-[9px] shadow-sm font-black" title="Featured Doctor">
+                            ★
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Name & Specialty Info */}
+                      <div>
+                        <h3 className="text-lg font-bold text-[#12110f] dark:text-[#f6f6f4] tracking-tight line-clamp-1">
+                          {doc.name[language]}
+                        </h3>
+                        <p className="text-xs font-semibold text-[#8e8672] dark:text-[#a8a08d] line-clamp-1 mt-0.5">
+                          {doc.specialtyName[language]}
+                        </p>
+                        
+                        {/* 5-Star Rating & Review Count */}
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20 text-[11px] font-bold">
+                            <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                            <span>{doc.rating || 4.9}</span>
+                          </div>
+                          <span className="text-[10px] text-neutral-400">
+                            ({doc.reviewCount || 120} {language === 'ar' ? 'تقييم' : 'reviews'})
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 flex items-center gap-1">
+
+                    <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 flex items-center gap-1 shrink-0">
                       <Layers className="w-3.5 h-3.5" />
                       {doc.floor[language]}
                     </span>
                   </div>
 
                   <div>
-                    <h3 className="text-xl font-bold text-[#12110f] dark:text-[#f6f6f4] tracking-tight">
-                      {doc.name[language]}
-                    </h3>
-                    <p className="text-xs font-semibold text-[#8e8672] dark:text-[#a8a08d] mt-1">
-                      {doc.specialtyName[language]}
-                    </p>
-                    <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-2 leading-relaxed">
+                    <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed line-clamp-2">
                       {doc.subSpecialty[language]}
                     </p>
                   </div>
 
+                  {/* Patient Review Snippet */}
+                  {doc.reviewSnippet && (
+                    <div className="p-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800/60 border border-neutral-200/50 dark:border-neutral-700/50 text-[11px] text-neutral-600 dark:text-neutral-300 italic flex items-center gap-1.5 leading-normal">
+                      <span className="text-[#8e8672] font-serif font-black text-xs">“</span>
+                      <span className="line-clamp-2">{doc.reviewSnippet[language]}</span>
+                      <span className="text-[#8e8672] font-serif font-black text-xs">”</span>
+                    </div>
+                  )}
+
                   {/* Schedule info if available */}
                   {doc.schedule && (
-                    <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-800 dark:text-amber-300 flex items-center gap-2">
-                      <Clock className="w-4 h-4 shrink-0" />
+                    <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-800 dark:text-amber-300 flex items-center gap-2">
+                      <Clock className="w-3.5 h-3.5 shrink-0" />
                       <span>{doc.schedule[language]}</span>
                     </div>
                   )}
 
                   {/* Note info if available */}
                   {doc.note && (
-                    <div className="p-3 rounded-xl bg-neutral-100 dark:bg-neutral-800/60 text-xs text-neutral-600 dark:text-neutral-300 flex items-start gap-2">
-                      <AlertCircle className="w-4 h-4 text-[#8e8672] shrink-0 mt-0.5" />
+                    <div className="p-2.5 rounded-xl bg-neutral-100 dark:bg-neutral-800/60 text-[11px] text-neutral-600 dark:text-neutral-300 flex items-start gap-2">
+                      <AlertCircle className="w-3.5 h-3.5 text-[#8e8672] shrink-0 mt-0.5" />
                       <span>{doc.note[language]}</span>
                     </div>
                   )}
                 </div>
 
-                {/* Contact Phone & Call Action */}
+                {/* Contact Phone & Book Appointment CTA */}
                 <div className="pt-4 border-t border-[#f0ede6] dark:border-[#2b2a26] space-y-2">
-                  {doc.phones && doc.phones.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {doc.phones.map((phone, pIdx) => (
-                        <a
-                          key={pIdx}
-                          href={`tel:${phone}`}
-                          className="flex-1 min-w-[130px] flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[#8e8672] hover:bg-[#7a7260] text-white text-xs font-bold transition-all shadow-sm active:scale-95"
-                        >
-                          <Phone className="w-3.5 h-3.5" />
-                          <span>{phone}</span>
-                        </a>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-2 text-xs text-neutral-400 font-medium">
-                      {language === 'ar' ? 'الحجز والاستعلام بالعيادة مباشرة' : 'Appointment at clinic reception'}
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {/* BOOK APPOINTMENT CTA BUTTON */}
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="flex-1 shadow-glow-primary text-xs"
+                      onClick={() => handleOpenBooking(doc)}
+                      icon={<Calendar className="w-3.5 h-3.5" />}
+                    >
+                      {language === 'ar' ? 'حجز موعد كشف' : 'Book Appointment'}
+                    </Button>
+
+                    {/* CALL BUTTON */}
+                    {doc.phones && doc.phones[0] && (
+                      <a
+                        href={`tel:${doc.phones[0]}`}
+                        title={language === 'ar' ? 'اتصال مباشر' : 'Call clinic'}
+                        className="p-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 transition-colors shrink-0"
+                      >
+                        <Phone className="w-4 h-4 text-[#8e8672]" />
+                      </a>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -492,7 +662,7 @@ export const DoctorsTowerPage: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Doctor Registration Modal */}
+      {/* Doctor Registration Modal (New Tower) */}
       <Modal
         isOpen={isRegisterModalOpen}
         onClose={() => setIsRegisterModalOpen(false)}
@@ -647,6 +817,16 @@ export const DoctorsTowerPage: React.FC = () => {
           </div>
         </form>
       </Modal>
+
+      {/* Interactive Booking & Payment Modal (Old Tower Doctors) */}
+      <BookingModal
+        isOpen={isBookingModalOpen}
+        onClose={() => {
+          setIsBookingModalOpen(false);
+          setSelectedBookingDoctor(null);
+        }}
+        doctor={selectedBookingDoctor}
+      />
 
       {/* Floating Interactive Toast Feedback */}
       <AnimatePresence>

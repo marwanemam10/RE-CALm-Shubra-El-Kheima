@@ -3,7 +3,8 @@ import {
   CityMallStore, 
   DoctorProfile, 
   BusRoute,
-  ParkingSlot 
+  ParkingSlot,
+  PharmacyInfo 
 } from '../types';
 
 export const siteImages = {
@@ -13,6 +14,7 @@ export const siteImages = {
   doctorsTower: '/data/doctors-tower.jpg',
   transport: '/data/transport.jpg',
   parking: '/data/parking.jpg',
+  pharmacy: '/doctors/pharmacy-ezaby.jpg',
 };
 
 export const heroStats = {
@@ -362,6 +364,28 @@ export const cityMallStores: CityMallStore[] = [
   },
 ];
 
+export const elEzabyPharmacy: PharmacyInfo = {
+  id: 'el-ezaby-pharmacy',
+  name: { ar: 'صيدلية العزبي', en: 'El-Ezaby Pharmacy' },
+  image: '/doctors/pharmacy-ezaby.jpg',
+  floor: { ar: 'الدور الأول - برج الأطباء القديم', en: '1st Floor - Old Doctors\' Tower' },
+  hotline: '19600',
+  promoCode: 'SHUBRA10',
+  discountPercentage: 10,
+  offerText: {
+    ar: 'احصل على خصم 10% عند حجز موعدك الطبي من خلال الموقع',
+    en: 'Get a 10% discount when booking your appointment through the website'
+  },
+  description: {
+    ar: 'صرح صيدلي متكامل في الدور الأول بالبرج يوفر كافة الأدوية المحلية والمستوردة، صرف الروشتات والتأمين الصحي، مستحضرات العناية الطبية، وخدمات قياس الضغط والسكر على مدار الساعة.',
+    en: 'Integrated 1st-floor pharmacy providing domestic & international pharmaceuticals, prescription & insurance fulfillment, skin care, and 24/7 vitals checkups.'
+  },
+  features: {
+    ar: ['صرف الروشتات الطبية والتأمين', 'توصيل مجاني وسريع في شبرا الخيمة', 'قياس الضغط وسكر الدم فورياً', 'خصم حصري 10% لرواد المنصة'],
+    en: ['Prescription & Insurance Dispensing', 'Fast Free Delivery in Shubra El-Kheima', 'Instant Blood Pressure & Glucose Checks', 'Exclusive 10% Discount for Hub Users']
+  }
+};
+
 export const doctorsOldTower: DoctorProfile[] = [
   // Internal medicine
   {
@@ -373,6 +397,15 @@ export const doctorsOldTower: DoctorProfile[] = [
     floor: { ar: 'الدور الثاني (ضمن عيادات ومعامل الأمير)', en: '2nd Floor (Al-Amir Clinics & Labs)' },
     schedule: { ar: 'يتوفر مواعيد محددة أسبوعياً', en: 'Specific weekly clinic sessions' },
     phones: ['01010734900'],
+    image: '/doctors/dr-ahmed-ismail-zidan.jpg',
+    rating: 4.9,
+    reviewCount: 142,
+    reviewSnippet: {
+      ar: 'دكتور متميز جداً وشرحه وافي لحالة السكر والمناعة، ومواعيده دقيقة.',
+      en: 'Outstanding physician, clear explanation of diabetic care, and very punctual.'
+    },
+    isSponsored: true,
+    examinationFee: { consultation: 150, regular: 300, urgent: 450 },
     note: { 
       ar: 'يفضل الاتصال المسبق على الرقم لتأكيد يوم وتوقيت تواجده في فرع عرابي.',
       en: 'Please call ahead to confirm daily attendance and appointment schedule.'
@@ -386,7 +419,16 @@ export const doctorsOldTower: DoctorProfile[] = [
     subSpecialty: { ar: 'استشاري أمراض الكلى والباطنة السكرية', en: 'Nephrology & Diabetic Care Consultant' },
     floor: { ar: 'الدور الثالث', en: '3rd Floor' },
     schedule: { ar: 'تبدأ العيادة عادةً من الساعة 7:30 مساءً', en: 'Clinic usually commences at 7:30 PM' },
-    phones: ['01010734900']
+    phones: ['01010734900'],
+    image: '/doctors/dr-ibrahim-farag-khater.jpg',
+    rating: 4.8,
+    reviewCount: 98,
+    reviewSnippet: {
+      ar: 'من أفضل أطباء الكلى والباطنة في شبرا الخيمة، قمة في الأخلاق والمهنية.',
+      en: 'One of the best nephrologists in Shubra El-Kheima, highly ethical and competent.'
+    },
+    isSponsored: false,
+    examinationFee: { consultation: 150, regular: 280, urgent: 420 }
   },
   {
     id: 'dr-islam-adel-awad',
@@ -395,7 +437,16 @@ export const doctorsOldTower: DoctorProfile[] = [
     specialtyName: { ar: 'باطنة وجهاز هضمي', en: 'Internal Medicine & Gastroenterology' },
     subSpecialty: { ar: 'أخصائي أمراض الجهاز الهضمي والقولون العصبي', en: 'Gastroenterology & Digestive Health Specialist' },
     floor: { ar: 'الدور الثاني', en: '2nd Floor' },
-    schedule: { ar: 'يومياً بالفترة المسائية', en: 'Daily evening sessions' }
+    schedule: { ar: 'يومياً بالفترة المسائية', en: 'Daily evening sessions' },
+    image: '/doctors/dr-islam-adel-awad.jpg',
+    rating: 4.8,
+    reviewCount: 84,
+    reviewSnippet: {
+      ar: 'تشخيص دقيق جداً لمشاكل القولون والجهاز الهضمي، وعلاج فعال.',
+      en: 'Very accurate diagnosis for gastrointestinal issues with effective treatment.'
+    },
+    isSponsored: false,
+    examinationFee: { consultation: 140, regular: 260, urgent: 400 }
   },
   {
     id: 'dr-mohamed-shebl',
@@ -404,6 +455,15 @@ export const doctorsOldTower: DoctorProfile[] = [
     specialtyName: { ar: 'كبد ومناظير جهاز هضمي', en: 'Hepatology & Endoscopy' },
     subSpecialty: { ar: 'استشاري أمراض الكبد ومناظير الجهاز الهضمي المتقدمة', en: 'Consultant of Hepatology & Diagnostic Endoscopy' },
     floor: { ar: 'الدور الثالث', en: '3rd Floor' },
+    image: '/doctors/dr-mohamed-shebl.jpg',
+    rating: 4.9,
+    reviewCount: 115,
+    reviewSnippet: {
+      ar: 'استشاري خبير في مناظير الكبد والجهاز الهضمي، والعيادة مجهزة بأحدث التقنيات.',
+      en: 'Expert endoscopy and hepatology consultant with a modern clinic setup.'
+    },
+    isSponsored: false,
+    examinationFee: { consultation: 160, regular: 320, urgent: 480 }
   },
   // OBGYN
   {
@@ -414,7 +474,16 @@ export const doctorsOldTower: DoctorProfile[] = [
     subSpecialty: { ar: 'استشارية أمراض النساء والتوليد والحقن المجهري', en: 'Consultant of OB/GYN & IVF Treatments' },
     floor: { ar: 'الدور الثاني (أعلى النساجون الشرقيون)', en: '2nd Floor (Above Oriental Weavers)' },
     phones: ['01116585054'],
-    note: { ar: 'الحجز المسبق مطلوب هاتفياً', en: 'Advance phone appointment recommended' }
+    image: '/doctors/dr-mona-heikal.jpg',
+    rating: 5.0,
+    reviewCount: 189,
+    reviewSnippet: {
+      ar: 'دكتورة ممتازة جداً ومريحة نفسياً ومتابعتها للحمل دقيقة وحريصة على المريضة.',
+      en: 'Exceptional gynecologist, very attentive with pregnancy follow-ups and care.'
+    },
+    isSponsored: true,
+    examinationFee: { consultation: 180, regular: 350, urgent: 500 },
+    note: { ar: 'الحجز المسبق مطلوب هاتفياً أو عبر الموقع', en: 'Advance booking recommended' }
   },
   {
     id: 'dr-hossam-ghoneim',
@@ -423,6 +492,15 @@ export const doctorsOldTower: DoctorProfile[] = [
     specialtyName: { ar: 'نساء وتوليد وجراحة مناظير', en: 'Obstetrics & Gynecologic Surgery' },
     subSpecialty: { ar: 'متابعة الحمل الحرج وجراحات الولادة بدون ألم', en: 'High-Risk Pregnancy & Modern Painless Delivery' },
     floor: { ar: 'الدور الرابع', en: '4th Floor' },
+    image: '/doctors/dr-hossam-ghoneim.jpg',
+    rating: 4.8,
+    reviewCount: 76,
+    reviewSnippet: {
+      ar: 'طبيب محترف في الولادة بدون ألم ومناظير النساء، تعامل راقٍ ومهني.',
+      en: 'Highly skilled in painless delivery and laparoscopy, very professional.'
+    },
+    isSponsored: false,
+    examinationFee: { consultation: 160, regular: 320, urgent: 470 }
   },
   // Surgery & Ortho
   {
@@ -433,6 +511,15 @@ export const doctorsOldTower: DoctorProfile[] = [
     subSpecialty: { ar: 'استشاري الجراحة العامة وجراحات المناظير والأورام', en: 'Consultant of General, Laparoscopic & Surgical Oncology' },
     floor: { ar: 'الدور الخامس (1 شارع أحمد عرابي)', en: '5th Floor (1 Ahmed Orabi St.)' },
     phones: ['01142299774', '01275175686', '01116585054'],
+    image: '/doctors/dr-ahmed-salem.jpg',
+    rating: 4.9,
+    reviewCount: 163,
+    reviewSnippet: {
+      ar: 'جراح قدير ومتمكن، أجرى العملية بنجاح تام والمتابعة بعد الجراحة ممتازة.',
+      en: 'Skilled surgeon, the procedure was a complete success with great post-op care.'
+    },
+    isSponsored: true,
+    examinationFee: { consultation: 180, regular: 350, urgent: 500 }
   },
   {
     id: 'dr-ahmed-el-husseiny',
@@ -442,6 +529,15 @@ export const doctorsOldTower: DoctorProfile[] = [
     subSpecialty: { ar: 'استشاري جراحة العظام وعلاج الانزلاق الغضروفي والمفاصل الصناعية', en: 'Consultant of Orthopedic Trauma, Spine & Joint Replacement' },
     floor: { ar: 'الدور الخامس (1 شارع أحمد عرابي)', en: '5th Floor (1 Ahmed Orabi St.)' },
     phones: ['01142299774', '01275175686', '01116585054'],
+    image: '/doctors/dr-ahmed-el-husseiny.jpg',
+    rating: 4.9,
+    reviewCount: 154,
+    reviewSnippet: {
+      ar: 'أفضل استشاري عظام وعمود فقري، التشخيص دقيق والنتيجة سريعة بفضل الله.',
+      en: 'Top orthopedic and spine consultant, accurate diagnosis and great recovery.'
+    },
+    isSponsored: true,
+    examinationFee: { consultation: 170, regular: 340, urgent: 490 }
   },
   {
     id: 'dr-ahmed-kishk',
@@ -450,6 +546,15 @@ export const doctorsOldTower: DoctorProfile[] = [
     specialtyName: { ar: 'مسالك بولية وتفتيت حصوات وكلى', en: 'Urology & Kidney Care' },
     subSpecialty: { ar: 'استشاري جراحة المسالك البولية والذكورة والعقم', en: 'Urological Surgery & Lithotripsy Specialist' },
     floor: { ar: 'الدور الرابع', en: '4th Floor' },
+    image: '/doctors/dr-ahmed-kishk.jpg',
+    rating: 4.8,
+    reviewCount: 91,
+    reviewSnippet: {
+      ar: 'علاج حصوات المسالك والكلى بأحدث الطرق وبدون جراحة معقدة، أنصح به بشدة.',
+      en: 'State-of-the-art urinary lithotripsy care, highly recommended.'
+    },
+    isSponsored: false,
+    examinationFee: { consultation: 150, regular: 300, urgent: 450 }
   },
   // Other
   {
@@ -459,6 +564,15 @@ export const doctorsOldTower: DoctorProfile[] = [
     specialtyName: { ar: 'أنف وأذن وحنجرة', en: 'ENT (Otolaryngology)' },
     subSpecialty: { ar: 'استشاري جراحات الأنف والأذن والحنجرة ومشاكل السمع والاتزان', en: 'ENT Surgery, Hearing & Balance Disorders' },
     floor: { ar: 'الدور الثالث', en: '3rd Floor' },
+    image: '/doctors/dr-hany-khattab.jpg',
+    rating: 4.8,
+    reviewCount: 110,
+    reviewSnippet: {
+      ar: 'دكتور هاني قمة في الذوق والخبرة في علاج حساسية الأنف ومشاكل الأذن.',
+      en: 'Extremely polite and experienced in sinus, allergy, and ear conditions.'
+    },
+    isSponsored: false,
+    examinationFee: { consultation: 140, regular: 280, urgent: 420 }
   },
   {
     id: 'dr-mohamed-mostafa',
@@ -467,6 +581,15 @@ export const doctorsOldTower: DoctorProfile[] = [
     specialtyName: { ar: 'الجلدية والتجميل والليزر', en: 'Dermatology, Cosmetology & Laser' },
     subSpecialty: { ar: 'أخصائي الأمراض الجلدية والعلاج بالليزر والعناية بالبشرة والشعر', en: 'Dermatology & Aesthetic Laser Therapy' },
     floor: { ar: 'الدور الثاني', en: '2nd Floor' },
+    image: '/doctors/dr-mohamed-mostafa.jpg',
+    rating: 4.9,
+    reviewCount: 148,
+    reviewSnippet: {
+      ar: 'عيادة مجهزة بأحدث أجهزة الليزر لعلاج البشرة والشعر، نتائج ملحوظة من أول جلسة.',
+      en: 'Clinic equipped with modern aesthetic lasers, noticeable results from first session.'
+    },
+    isSponsored: true,
+    examinationFee: { consultation: 150, regular: 300, urgent: 450 }
   },
   {
     id: 'al-borg-pt-center',
@@ -475,7 +598,15 @@ export const doctorsOldTower: DoctorProfile[] = [
     specialtyName: { ar: 'علاج طبيعي وتأهيل حركي', en: 'Physical Therapy & Rehabilitation' },
     subSpecialty: { ar: 'أحدث أجهزة العلاج الطبيعي وتأهيل العمود الفقري وما بعد الكسور والجلطات', en: 'Advanced Physiotherapy, Spine Rehab & Post-Operative Recovery' },
     floor: { ar: 'الدور الثالث', en: '3rd Floor' },
-    phones: ['01010734900']
+    phones: ['01010734900'],
+    rating: 4.8,
+    reviewCount: 88,
+    reviewSnippet: {
+      ar: 'مركز مجهز بأحدث أجهزة العلاج الطبيعي والتأهيل الحركي مع طاقم متخصص.',
+      en: 'Well-equipped physiotherapy and movement rehabilitation center with expert staff.'
+    },
+    isSponsored: false,
+    examinationFee: { consultation: 120, regular: 250, urgent: 380 }
   },
 ];
 

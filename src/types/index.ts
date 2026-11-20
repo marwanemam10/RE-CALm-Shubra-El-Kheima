@@ -38,6 +38,29 @@ export interface DoctorProfile {
   schedule?: { ar: string; en: string };
   phones?: string[];
   note?: { ar: string; en: string };
+  image?: string;
+  rating?: number;
+  reviewCount?: number;
+  reviewSnippet?: { ar: string; en: string };
+  isSponsored?: boolean;
+  examinationFee?: {
+    consultation: number;
+    regular: number;
+    urgent: number;
+  };
+}
+
+export interface PharmacyInfo {
+  id: string;
+  name: { ar: string; en: string };
+  image: string;
+  floor: { ar: string; en: string };
+  hotline: string;
+  promoCode: string;
+  discountPercentage: number;
+  offerText: { ar: string; en: string };
+  description: { ar: string; en: string };
+  features: { ar: string[]; en: string[] };
 }
 
 export interface BusRoute {
