@@ -667,12 +667,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             </div>
 
             {/* Actions Bar */}
-            <div className="pt-3 flex items-center justify-between gap-3 border-t border-[#f0ede6] dark:border-[#2b2a26]">
+            <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-[#f0ede6] dark:border-[#2b2a26]">
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
                 onClick={resetModalState}
+                className="w-full sm:w-auto order-2 sm:order-1 min-h-[44px]"
               >
                 {language === 'ar' ? 'إلغاء' : 'Cancel'}
               </Button>
@@ -681,7 +682,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 type="submit"
                 variant="primary"
                 size="md"
-                className="px-8 shadow-glow-primary"
+                className="w-full sm:w-auto order-1 sm:order-2 px-6 sm:px-8 shadow-glow-primary min-h-[44px] justify-center"
                 disabled={paymentMethod === 'instapay' && !instapayReceipt}
                 icon={<CheckCircle2 className="w-4 h-4" />}
               >

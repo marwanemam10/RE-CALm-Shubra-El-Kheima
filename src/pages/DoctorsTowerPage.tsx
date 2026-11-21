@@ -207,7 +207,7 @@ export const DoctorsTowerPage: React.FC = () => {
       
       {/* Header Banner */}
       <div className="relative rounded-3xl overflow-hidden border border-[#e2dfd8] dark:border-[#33312b] shadow-xl">
-        <div className="relative h-72 sm:h-96 w-full">
+        <div className="relative h-64 sm:h-96 w-full">
           <img
             src={siteImages.doctorsTower}
             alt="Doctors Tower Shubra El-Kheima"
@@ -217,7 +217,7 @@ export const DoctorsTowerPage: React.FC = () => {
         </div>
 
         {/* Content Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 text-white space-y-4">
+        <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-10 text-white space-y-3 sm:space-y-4">
           <div className="flex flex-wrap items-center gap-2">
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#8e8672] text-white">
               {language === 'ar' ? 'المجمع الطبي التخصصي' : 'Specialized Healthcare Hub'}
@@ -228,11 +228,11 @@ export const DoctorsTowerPage: React.FC = () => {
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight drop-shadow-md">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight drop-shadow-md">
             {t('doctorsTower')}
           </h1>
 
-          <p className="max-w-3xl text-sm sm:text-base text-neutral-300 font-normal leading-relaxed drop-shadow">
+          <p className="max-w-3xl text-xs sm:text-base text-neutral-300 font-normal leading-relaxed drop-shadow line-clamp-3 sm:line-clamp-none">
             {language === 'ar'
               ? 'صرح الرعاية الطبية الأول في شبرا الخيمة، يضم نخبة كبار أساتذة واستشاريي الطب في مختلف التخصصات، العيادات الخارجية المجهزة، ومراكز الفحوصات والتحاليل والعلاج الطبيعي.'
               : 'The benchmark medical destination in Shubra El-Kheima, housing elite professors and consultant specialists across internal medicine, surgery, pediatrics, diagnostics, and modern rehabilitation.'}
@@ -318,7 +318,7 @@ export const DoctorsTowerPage: React.FC = () => {
           </div>
 
           {/* 2. DEDICATED PHARMACY SECTION: EL-EZABY PHARMACY */}
-          <div className="p-6 rounded-3xl bg-gradient-to-br from-emerald-500/10 via-white dark:via-[#1c1b18] to-emerald-500/5 border-2 border-emerald-500/30 shadow-md">
+          <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-emerald-500/10 via-white dark:via-[#1c1b18] to-emerald-500/5 border-2 border-emerald-500/30 shadow-md">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
               
               {/* Pharmacy Image */}
@@ -369,10 +369,10 @@ export const DoctorsTowerPage: React.FC = () => {
                 </div>
 
                 {/* Action Row */}
-                <div className="pt-2 flex flex-wrap items-center gap-3">
+                <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
                   <a
                     href={`tel:${elEzabyPharmacy.hotline}`}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all active:scale-95"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all active:scale-95 min-h-[44px]"
                   >
                     <Phone className="w-4 h-4" />
                     <span>{language === 'ar' ? 'الخط الساخن: ' : 'Call Hotline: '}{elEzabyPharmacy.hotline}</span>
@@ -381,7 +381,7 @@ export const DoctorsTowerPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleCopyPharmacyPromo}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs font-bold transition-all"
+                    className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs font-bold transition-all min-h-[44px]"
                   >
                     <Tag className="w-3.5 h-3.5" />
                     <span>{language === 'ar' ? 'كود الخصم: ' : 'Promo Code: '}<strong>{elEzabyPharmacy.promoCode}</strong></span>
@@ -413,7 +413,7 @@ export const DoctorsTowerPage: React.FC = () => {
                   value={oldSearchQuery}
                   onChange={(e) => setOldSearchQuery(e.target.value)}
                   placeholder={language === 'ar' ? 'مثال: د. أحمد زيدان، د. منى هيكل...' : 'e.g., Dr. Ahmed Zidan, Dr. Mona Heikal...'}
-                  className="w-full pl-9 rtl:pl-4 rtl:pr-9 pr-4 py-2.5 rounded-xl bg-white dark:bg-[#1b1a17] border border-[#dedbd3] dark:border-[#383630] text-sm focus:outline-none focus:ring-2 focus:ring-[#8e8672]/40"
+                  className="w-full pl-9 rtl:pl-4 rtl:pr-9 pr-4 py-2.5 rounded-xl bg-white dark:bg-[#1b1a17] border border-[#dedbd3] dark:border-[#383630] text-sm focus:outline-none focus:ring-2 focus:ring-[#8e8672]/40 min-h-[44px]"
                 />
               </div>
             </div>
@@ -427,7 +427,7 @@ export const DoctorsTowerPage: React.FC = () => {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: idx * 0.05 }}
-                className="p-6 rounded-3xl bg-white dark:bg-[#1b1a17] border border-[#e2dfd8] dark:border-[#33312b] shadow-card-soft dark:shadow-card-dark hover:shadow-xl hover:border-[#8e8672]/60 transition-all duration-300 flex flex-col justify-between space-y-5"
+                className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#1b1a17] border border-[#e2dfd8] dark:border-[#33312b] shadow-card-soft dark:shadow-card-dark hover:shadow-xl hover:border-[#8e8672]/60 transition-all duration-300 flex flex-col justify-between space-y-5"
               >
                 <div className="space-y-4">
                   {/* Doctor Card Top: Photo + Rating + Floor Badge */}
@@ -519,7 +519,7 @@ export const DoctorsTowerPage: React.FC = () => {
                     <Button
                       variant="primary"
                       size="sm"
-                      className="flex-1 shadow-glow-primary text-xs"
+                      className="flex-1 shadow-glow-primary text-xs min-h-[44px]"
                       onClick={() => handleOpenBooking(doc)}
                       icon={<Calendar className="w-3.5 h-3.5" />}
                     >
@@ -531,7 +531,7 @@ export const DoctorsTowerPage: React.FC = () => {
                       <a
                         href={`tel:${doc.phones[0]}`}
                         title={language === 'ar' ? 'اتصال مباشر' : 'Call clinic'}
-                        className="p-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 transition-colors shrink-0"
+                        className="p-2.5 rounded-xl bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 transition-colors shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center"
                       >
                         <Phone className="w-4 h-4 text-[#8e8672]" />
                       </a>

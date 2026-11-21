@@ -65,10 +65,10 @@ export const Navbar: React.FC = () => {
                 <Building2 className="w-6 h-6" />
               </div>
               <div className="flex flex-col">
-                <span className="text-base sm:text-lg font-black tracking-tight text-[#12110f] dark:text-[#f6f6f4] group-hover:text-[#8e8672] transition-colors leading-tight">
+                <span className="text-sm sm:text-lg font-black tracking-tight text-[#12110f] dark:text-[#f6f6f4] group-hover:text-[#8e8672] transition-colors leading-tight">
                   RE-CALm
                 </span>
-                <span className="text-xs font-semibold text-[#8e8672] dark:text-[#a8a08d] tracking-wide">
+                <span className="text-[10px] sm:text-xs font-semibold text-[#8e8672] dark:text-[#a8a08d] tracking-wide truncate max-w-[125px] sm:max-w-none">
                   {language === 'ar' ? 'شبرا الخيمة - رؤية التطوير' : 'Shubra El-Kheima Urban Hub'}
                 </span>
               </div>
@@ -159,12 +159,12 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Controls: Language Switcher, Theme Switcher, Mobile Toggle */}
-          <div className="flex items-center gap-2 sm:gap-2.5">
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
             {/* Language Switcher */}
             <button
               onClick={toggleLanguage}
               aria-label="Switch Language"
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/80 dark:bg-[#1b1a17]/80 hover:bg-white dark:hover:bg-[#1b1a17] border border-[#e2dfd8] dark:border-[#383630] text-xs font-bold transition-all shadow-sm active:scale-95 text-[#12110f] dark:text-[#f6f6f4]"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl bg-white/80 dark:bg-[#1b1a17]/80 hover:bg-white dark:hover:bg-[#1b1a17] border border-[#e2dfd8] dark:border-[#383630] text-xs font-bold transition-all shadow-sm active:scale-95 text-[#12110f] dark:text-[#f6f6f4] min-h-[40px]"
             >
               <Languages className="w-4 h-4 text-[#8e8672]" />
               <span className="uppercase">{language === 'ar' ? 'English' : 'عربي'}</span>
@@ -174,7 +174,7 @@ export const Navbar: React.FC = () => {
             <button
               onClick={toggleTheme}
               aria-label="Toggle Theme"
-              className="p-2.5 rounded-xl bg-white/80 dark:bg-[#1b1a17]/80 hover:bg-white dark:hover:bg-[#1b1a17] border border-[#e2dfd8] dark:border-[#383630] text-neutral-700 dark:text-neutral-300 transition-all shadow-sm active:scale-95"
+              className="p-2 sm:p-2.5 rounded-xl bg-white/80 dark:bg-[#1b1a17]/80 hover:bg-white dark:hover:bg-[#1b1a17] border border-[#e2dfd8] dark:border-[#383630] text-neutral-700 dark:text-neutral-300 transition-all shadow-sm active:scale-95 min-h-[40px] min-w-[40px] flex items-center justify-center"
             >
               {theme === 'light' ? (
                 <Moon className="w-4 h-4 text-neutral-700" />
@@ -187,7 +187,7 @@ export const Navbar: React.FC = () => {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Open Menu"
-              className="lg:hidden p-2.5 rounded-xl bg-white/80 dark:bg-[#1b1a17]/80 border border-[#e2dfd8] dark:border-[#383630] text-neutral-700 dark:text-neutral-300 transition-all shadow-sm"
+              className="lg:hidden p-2 sm:p-2.5 rounded-xl bg-white/80 dark:bg-[#1b1a17]/80 border border-[#e2dfd8] dark:border-[#383630] text-neutral-700 dark:text-neutral-300 transition-all shadow-sm min-h-[40px] min-w-[40px] flex items-center justify-center"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>

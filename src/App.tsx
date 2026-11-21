@@ -32,12 +32,12 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between selection:bg-[#8e8672]/30 selection:text-[#12110f] dark:selection:text-white">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col justify-between selection:bg-[#8e8672]/30 selection:text-[#12110f] dark:selection:text-white">
       {/* Persistent Navbar */}
       <Navbar />
 
       {/* Main Dynamic View with Animated Transitions */}
-      <main className="flex-1">
+      <main className="flex-1 w-full max-w-full overflow-x-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeView}

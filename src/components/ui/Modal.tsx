@@ -35,7 +35,7 @@ export const Modal: React.FC<ModalProps> = ({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -49,7 +49,7 @@ export const Modal: React.FC<ModalProps> = ({
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
             transition={{ type: "spring", duration: 0.35, bounce: 0.2 }}
             className={cn(
-              "relative w-full max-w-lg rounded-2xl bg-white dark:bg-[#1b1a17] border border-[#e6e4df] dark:border-[#33312b] p-6 shadow-2xl z-10 overflow-hidden",
+              "relative w-[95vw] sm:max-w-lg max-h-[88vh] overflow-y-auto rounded-2xl sm:rounded-3xl bg-white dark:bg-[#1b1a17] border border-[#e6e4df] dark:border-[#33312b] p-4 sm:p-6 shadow-2xl z-10",
               className
             )}
           >

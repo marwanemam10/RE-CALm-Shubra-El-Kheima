@@ -83,7 +83,7 @@ export const SponsoredCarousel: React.FC<SponsoredCarouselProps> = ({
       onTouchEnd={() => setIsPaused(false)}
     >
       {/* Top Banner Tag */}
-      <div className="flex items-center justify-between px-6 pt-5 pb-2 text-xs font-bold text-neutral-500">
+      <div className="flex items-center justify-between px-4 sm:px-6 pt-4 pb-2 text-xs font-bold text-neutral-500">
         <div className="flex items-center gap-2">
           <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#8e8672] text-white shadow-sm font-bold text-[11px]">
             <Sparkles className="w-3.5 h-3.5" />
@@ -103,7 +103,7 @@ export const SponsoredCarousel: React.FC<SponsoredCarouselProps> = ({
       </div>
 
       {/* Main Slide Content with Animated Transitions */}
-      <div className="p-6 sm:p-8 min-h-[260px] flex items-center">
+      <div className="p-4 sm:p-6 md:p-8 min-h-[240px] flex items-center">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
@@ -114,12 +114,12 @@ export const SponsoredCarousel: React.FC<SponsoredCarouselProps> = ({
             className="w-full"
           >
             {isDoctor && doctor && (
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 items-center">
                 
                 {/* Doctor Photo */}
                 <div className="md:col-span-4 flex items-center justify-center">
                   <div className="relative">
-                    <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl overflow-hidden border-2 border-[#8e8672]/40 shadow-md bg-neutral-100 dark:bg-neutral-800">
+                    <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-2xl overflow-hidden border-2 border-[#8e8672]/40 shadow-md bg-neutral-100 dark:bg-neutral-800">
                       <img
                         src={doctor.image || '/doctors/dr-ahmed-ismail-zidan.jpg'}
                         alt={doctor.name[language]}
@@ -172,13 +172,13 @@ export const SponsoredCarousel: React.FC<SponsoredCarouselProps> = ({
                   )}
 
                   {/* Actions Bar */}
-                  <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start rtl:md:justify-start gap-3">
+                  <div className="pt-2 flex flex-col sm:flex-row items-center justify-center md:justify-start rtl:md:justify-start gap-2.5 sm:gap-3 w-full">
                     <Button
                       variant="primary"
                       size="sm"
                       onClick={() => onBookDoctor(doctor)}
                       icon={<Calendar className="w-4 h-4" />}
-                      className="shadow-glow-primary px-5"
+                      className="shadow-glow-primary px-5 w-full sm:w-auto justify-center min-h-[44px]"
                     >
                       {language === 'ar' ? 'احجز الآن أونلاين' : 'Book Now Online'}
                     </Button>
@@ -186,7 +186,7 @@ export const SponsoredCarousel: React.FC<SponsoredCarouselProps> = ({
                     {doctor.phones && doctor.phones[0] && (
                       <a
                         href={`tel:${doctor.phones[0]}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-xs font-semibold text-neutral-700 dark:text-neutral-200 transition-colors"
+                        className="w-full sm:w-auto justify-center min-h-[44px] inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-xs font-semibold text-neutral-700 dark:text-neutral-200 transition-colors"
                       >
                         <Phone className="w-3.5 h-3.5 text-[#8e8672]" />
                         <span>{doctor.phones[0]}</span>
@@ -199,12 +199,12 @@ export const SponsoredCarousel: React.FC<SponsoredCarouselProps> = ({
             )}
 
             {!isDoctor && pharm && (
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 items-center">
                 
                 {/* Pharmacy Photo */}
                 <div className="md:col-span-4 flex items-center justify-center">
                   <div className="relative">
-                    <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl overflow-hidden border-2 border-emerald-500/40 shadow-md bg-white">
+                    <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-2xl overflow-hidden border-2 border-emerald-500/40 shadow-md bg-white">
                       <img
                         src={pharm.image}
                         alt={pharm.name[language]}
@@ -247,7 +247,7 @@ export const SponsoredCarousel: React.FC<SponsoredCarouselProps> = ({
                   </div>
 
                   {/* Promo Code Box */}
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs font-bold text-amber-800 dark:text-amber-300">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs font-bold text-amber-800 dark:text-amber-300 max-w-full flex-wrap">
                     <Tag className="w-3.5 h-3.5" />
                     <span>{language === 'ar' ? 'كود الخصم في الصيدلية:' : 'Pharmacy Promo Code:'}</span>
                     <span className="font-mono bg-white dark:bg-black/40 px-2 py-0.5 rounded font-black tracking-wider text-[#12110f] dark:text-white">
@@ -256,10 +256,10 @@ export const SponsoredCarousel: React.FC<SponsoredCarouselProps> = ({
                   </div>
 
                   {/* Actions Bar */}
-                  <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start rtl:md:justify-start gap-3">
+                  <div className="pt-2 flex flex-col sm:flex-row items-center justify-center md:justify-start rtl:md:justify-start gap-2.5 sm:gap-3 w-full">
                     <a
                       href={`tel:${pharm.hotline}`}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all active:scale-95"
+                      className="w-full sm:w-auto justify-center min-h-[44px] inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all active:scale-95"
                     >
                       <Phone className="w-4 h-4" />
                       <span>{language === 'ar' ? 'اتصل بالخط الساخن: ' : 'Call Hotline: '}{pharm.hotline}</span>
@@ -274,7 +274,7 @@ export const SponsoredCarousel: React.FC<SponsoredCarouselProps> = ({
       </div>
 
       {/* Navigation Controls: Left/Right Arrows & Pagination Dots */}
-      <div className="flex items-center justify-between px-6 pb-4 pt-1 border-t border-[#e2dfd8]/70 dark:border-[#33312b]/70">
+      <div className="flex items-center justify-between px-4 sm:px-6 pb-3 pt-2 border-t border-[#e2dfd8]/70 dark:border-[#33312b]/70">
         {/* Pagination Dots */}
         <div className="flex items-center gap-1.5">
           {slides.map((_, dotIdx) => (

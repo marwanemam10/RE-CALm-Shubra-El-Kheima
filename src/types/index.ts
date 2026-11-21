@@ -9,6 +9,15 @@ export type NavView =
   | 'transport' 
   | 'parking';
 
+export interface VenueReview {
+  id: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  date: string;
+  dateFormatted?: { ar: string; en: string };
+}
+
 export interface OpenAirVenue {
   id: string;
   name: { ar: string; en: string };
@@ -17,6 +26,10 @@ export interface OpenAirVenue {
   description: { ar: string; en: string };
   tag: string;
   badgeColor: string;
+  folderName: string;
+  rating?: number;
+  reviewCount?: number;
+  sampleReviews?: VenueReview[];
 }
 
 export interface CityMallStore {

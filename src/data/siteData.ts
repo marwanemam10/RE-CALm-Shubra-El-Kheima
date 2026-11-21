@@ -106,7 +106,36 @@ export const openAirVenues: OpenAirVenue[] = [
       en: 'Specialty coffee roastery serving artisan hot & cold brews, light desserts, and fresh handcrafted sandwiches.'
     },
     tag: 'Coffee & Bites',
-    badgeColor: 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
+    badgeColor: 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300',
+    folderName: 'Brew District',
+    rating: 4.9,
+    reviewCount: 18,
+    sampleReviews: [
+      {
+        id: 'bd-rev-1',
+        userName: 'م. زياد الشافعي',
+        rating: 5,
+        comment: 'القهوة المختصة عندهم مضبوطة جداً خاصة الفلات وايت والـ V60 الإثيوبي، والأجواء المفتوحة في الشتاء تحفة وجلساتها رايقة.',
+        date: '2026-11-19T14:30:00Z',
+        dateFormatted: { ar: 'منذ يومين', en: '2 days ago' }
+      },
+      {
+        id: 'bd-rev-2',
+        userName: 'سارة عبد الرحمن',
+        rating: 5,
+        comment: 'مكان هادئ ومثالي للشغل والقراءة، كيك التيراميسو ممتاز والخدمة سريعة وبشوشة. إضافة ممتازة لمنطقة شبرا الخيمة.',
+        date: '2026-11-14T11:20:00Z',
+        dateFormatted: { ar: 'منذ أسبوع', en: '1 week ago' }
+      },
+      {
+        id: 'bd-rev-3',
+        userName: 'أحمد كمال',
+        rating: 4,
+        comment: 'الديكور راقي جداً والجلسات الخارجية مريحة، الأسعار مناسبة لجودة التحميص وحجم المشروبات.',
+        date: '2026-11-07T18:00:00Z',
+        dateFormatted: { ar: 'منذ أسبوعين', en: '2 weeks ago' }
+      }
+    ]
   },
   {
     id: 'green-bowl',
@@ -118,7 +147,36 @@ export const openAirVenues: OpenAirVenue[] = [
       en: 'Contemporary healthy eatery serving signature salad bowls, fresh cold-pressed detox juices, and calorie-conscious meals.'
     },
     tag: 'Healthy Bowls',
-    badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+    badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
+    folderName: 'Green Bowl',
+    rating: 4.8,
+    reviewCount: 14,
+    sampleReviews: [
+      {
+        id: 'gb-rev-1',
+        userName: 'نورهان طارق',
+        rating: 5,
+        comment: 'أخيراً مطعم صحي بيعمل سالاد بولز مشبعة ولذيذة في شبرا الخيمة! صوص الهني ماسترد مع الدجاج المشوي خيالي.',
+        date: '2026-11-20T12:00:00Z',
+        dateFormatted: { ar: 'أمس', en: 'Yesterday' }
+      },
+      {
+        id: 'gb-rev-2',
+        userName: 'د. عمر مصطفى',
+        rating: 5,
+        comment: 'عصائر الديتوكس فريش ومن غير أي سكر مضاف، مكان نظيف ومثالي لكل شخص مهتم بلياقته وصحته.',
+        date: '2026-11-17T16:15:00Z',
+        dateFormatted: { ar: 'منذ 4 أيام', en: '4 days ago' }
+      },
+      {
+        id: 'gb-rev-3',
+        userName: 'ياسمين فؤاد',
+        rating: 4,
+        comment: 'خيارات البروتين ممتازة وسعرات الوجبات مكتوبة بدقة على البول، تجربة نظيفة وهكررها دايماً.',
+        date: '2026-11-08T19:40:00Z',
+        dateFormatted: { ar: 'منذ أسبوعين', en: '2 weeks ago' }
+      }
+    ]
   },
   {
     id: 'sweet-avenue',
@@ -130,7 +188,36 @@ export const openAirVenues: OpenAirVenue[] = [
       en: 'Indulgent dessert lounge offering crispy Belgian waffles, French crepes, fluffy pancakes, artisanal gelato, and thick milkshakes.'
     },
     tag: 'Waffles & Gelato',
-    badgeColor: 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300'
+    badgeColor: 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300',
+    folderName: 'Sweet Avenue',
+    rating: 4.9,
+    reviewCount: 22,
+    sampleReviews: [
+      {
+        id: 'sa-rev-1',
+        userName: 'ريهام الشناوي',
+        rating: 5,
+        comment: 'الوافل البلجيكي المقرمش مع النوتيلا والفراولة طعمه حكاية، والجيلاتو إيطالي أصلي وقوامه كريمي ناعم.',
+        date: '2026-11-19T20:10:00Z',
+        dateFormatted: { ar: 'منذ يومين', en: '2 days ago' }
+      },
+      {
+        id: 'sa-rev-2',
+        userName: 'كريم عبد العزيز',
+        rating: 5,
+        comment: 'البان كيك هش جداً وطازج، والخدمة ممتازة ومبتسمة دائماً. مكان مبهج جداً للعائلات والأطفال.',
+        date: '2026-11-16T17:30:00Z',
+        dateFormatted: { ar: 'منذ 5 أيام', en: '5 days ago' }
+      },
+      {
+        id: 'sa-rev-3',
+        userName: 'مريم خالد',
+        rating: 5,
+        comment: 'الميلك شيك غني ولذيذ، طريقة التقديم احترافية جداً والمكان مريح نفسياً في الهواء الطلق.',
+        date: '2026-11-13T21:00:00Z',
+        dateFormatted: { ar: 'منذ أسبوع', en: '1 week ago' }
+      }
+    ]
   },
   {
     id: 'urban-bites',
@@ -142,7 +229,36 @@ export const openAirVenues: OpenAirVenue[] = [
       en: 'Modern fast-casual joint crafting gourmet flame-grilled burgers, golden crispy fried chicken, seasoned fries, and combo meals.'
     },
     tag: 'Burgers & Fries',
-    badgeColor: 'bg-orange-100 text-orange-800 dark:bg-orange-950/60 dark:text-orange-300'
+    badgeColor: 'bg-orange-100 text-orange-800 dark:bg-orange-950/60 dark:text-orange-300',
+    folderName: 'Urban Bites',
+    rating: 4.7,
+    reviewCount: 19,
+    sampleReviews: [
+      {
+        id: 'ub-rev-1',
+        userName: 'تامر عزت',
+        rating: 5,
+        comment: 'البرجر المشوي على الفحم نكهته مميزة جداً وجودة اللحم ممتازة ومطبوخ صح، عيش البريوش طازج ولذيذ.',
+        date: '2026-11-18T15:45:00Z',
+        dateFormatted: { ar: 'منذ 3 أيام', en: '3 days ago' }
+      },
+      {
+        id: 'ub-rev-2',
+        userName: 'هدى إبراهيم',
+        rating: 4,
+        comment: 'الدجاج كريسبي ومش مدهن خالص، البطاطس المتبلة سخنة ومقرمشة والكميات مشبعة جداً بالنسبة للسعر.',
+        date: '2026-11-14T20:20:00Z',
+        dateFormatted: { ar: 'منذ أسبوع', en: '1 week ago' }
+      },
+      {
+        id: 'ub-rev-3',
+        userName: 'محمود فوزي',
+        rating: 5,
+        comment: 'الصوصات عندهم سر الصنعة! داينامايت برجر كان تجربة خرافية وسرعة الطلب كانت ممتازة.',
+        date: '2026-11-06T19:00:00Z',
+        dateFormatted: { ar: 'منذ أسبوعين', en: '2 weeks ago' }
+      }
+    ]
   },
   {
     id: 'juice-lab',
@@ -154,7 +270,36 @@ export const openAirVenues: OpenAirVenue[] = [
       en: 'Artisan juice lab mixing 100% natural fruit smoothies, fresh tropical mocktails, protein shakes, and vitamin refreshers.'
     },
     tag: 'Smoothies & Detox',
-    badgeColor: 'bg-teal-100 text-teal-800 dark:bg-teal-950/60 dark:text-teal-300'
+    badgeColor: 'bg-teal-100 text-teal-800 dark:bg-teal-950/60 dark:text-teal-300',
+    folderName: 'The Juice Lab',
+    rating: 4.8,
+    reviewCount: 16,
+    sampleReviews: [
+      {
+        id: 'jl-rev-1',
+        userName: 'فريدة الجوهري',
+        rating: 5,
+        comment: 'السموذي طبيعي 100% ومنعش جداً بعد جولة المشي في المول، عصير الباشن فروت مع المانجو اختراع حقيقي!',
+        date: '2026-11-19T17:00:00Z',
+        dateFormatted: { ar: 'منذ يومين', en: '2 days ago' }
+      },
+      {
+        id: 'jl-rev-2',
+        userName: 'حسام الدين',
+        rating: 5,
+        comment: 'الفواكه بتتعصر قدامك فريش بدون مكسبات طعم أو ألوان، جودة فائقة وسرعة في التقديم ونظافة تشرف.',
+        date: '2026-11-17T13:40:00Z',
+        dateFormatted: { ar: 'منذ 4 أيام', en: '4 days ago' }
+      },
+      {
+        id: 'jl-rev-3',
+        userName: 'أميرة شريف',
+        rating: 5,
+        comment: 'كوكتيل البروتين بالموز والتمر مع المكسرات طاقة ونشاط، أفضل مكان عصائر في المنطقة بلا منازع.',
+        date: '2026-11-11T19:10:00Z',
+        dateFormatted: { ar: 'منذ 10 أيام', en: '10 days ago' }
+      }
+    ]
   }
 ];
 
