@@ -431,10 +431,10 @@ export const DoctorsTowerPage: React.FC = () => {
               >
                 <div className="space-y-4">
                   {/* Doctor Card Top: Photo + Rating + Floor Badge */}
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
+                  <div className="flex items-start justify-between gap-2.5">
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                       {/* Doctor Photo from new image with circular/rounded framing */}
-                      <div className="relative">
+                      <div className="relative shrink-0">
                         <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden border-2 border-[#8e8672]/40 bg-neutral-100 dark:bg-neutral-800 shadow-sm shrink-0">
                           <img
                             src={doc.image || '/data/doctors-tower.jpg'}
@@ -453,29 +453,29 @@ export const DoctorsTowerPage: React.FC = () => {
                       </div>
 
                       {/* Name & Specialty Info */}
-                      <div>
-                        <h3 className="text-lg font-bold text-[#12110f] dark:text-[#f6f6f4] tracking-tight line-clamp-1">
+                      <div className="min-w-0">
+                        <h3 className="text-base sm:text-lg font-bold text-[#12110f] dark:text-[#f6f6f4] tracking-tight truncate">
                           {doc.name[language]}
                         </h3>
-                        <p className="text-xs font-semibold text-[#8e8672] dark:text-[#a8a08d] line-clamp-1 mt-0.5">
+                        <p className="text-xs font-semibold text-[#8e8672] dark:text-[#a8a08d] truncate mt-0.5">
                           {doc.specialtyName[language]}
                         </p>
                         
                         {/* 5-Star Rating & Review Count */}
-                        <div className="flex items-center gap-1.5 mt-1">
+                        <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                           <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20 text-[11px] font-bold">
                             <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                             <span>{doc.rating || 4.9}</span>
                           </div>
-                          <span className="text-[10px] text-neutral-400">
+                          <span className="text-[10px] text-neutral-400 whitespace-nowrap">
                             ({doc.reviewCount || 120} {language === 'ar' ? 'تقييم' : 'reviews'})
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 flex items-center gap-1 shrink-0">
-                      <Layers className="w-3.5 h-3.5" />
+                    <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-[11px] sm:text-xs font-bold bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 flex items-center gap-1 shrink-0 whitespace-nowrap">
+                      <Layers className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                       {doc.floor[language]}
                     </span>
                   </div>

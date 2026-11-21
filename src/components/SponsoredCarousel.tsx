@@ -46,6 +46,7 @@ export const SponsoredCarousel: React.FC<SponsoredCarouselProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const autoPlayRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const touchStartXRef = useRef<number | null>(null);
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % slides.length);
@@ -53,6 +54,31 @@ export const SponsoredCarousel: React.FC<SponsoredCarouselProps> = ({
 
   const prevSlide = () => {
     setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsPaused(true);
+    touchStartXRef.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    setIsPaused(false);
+    if (touchStartXRef.current !== null) {
+      const touchEndX = e.changedTouches[0].clientX;
+      const diffX = touchEndX - touchStartXRef.current;
+      if (Math.abs(diffX) > 40) {
+        if (language === 'ar') {
+          // In RTL Arabic: swipe right -> next slide, swipe left -> prev slide
+          if (diffX > 0) nextSlide();
+          else prevSlide();
+        } else {
+          // In LTR English: swipe left -> next slide, swipe right -> prev slide
+          if (diffX < 0) nextSlide();
+          else prevSlide();
+        }
+      }
+    }
+    touchStartXRef.current = null;
   };
 
   useEffect(() => {
@@ -76,11 +102,11 @@ export const SponsoredCarousel: React.FC<SponsoredCarouselProps> = ({
 
   return (
     <div 
-      className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#8e8672]/15 via-white dark:via-[#1c1b18] to-[#90a69c]/15 border-2 border-[#8e8672]/30 dark:border-[#8e8672]/25 shadow-lg group"
+      className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-br from-[#8e8672]/15 via-white dark:via-[#1c1b18] to-[#90a69c]/15 border-2 border-[#8e8672]/30 dark:border-[#8e8672]/25 shadow-lg group select-none"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      onTouchStart={() => setIsPaused(true)}
-      onTouchEnd={() => setIsPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Top Banner Tag */}
       <div className="flex items-center justify-between px-4 sm:px-6 pt-4 pb-2 text-xs font-bold text-neutral-500">
@@ -296,14 +322,14 @@ export const SponsoredCarousel: React.FC<SponsoredCarouselProps> = ({
           <button
             onClick={prevSlide}
             aria-label="Previous Slide"
-            className="p-1.5 rounded-lg bg-white/80 dark:bg-[#23221e]/80 border border-[#dedbd3] dark:border-[#383630] text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            className="p-2 sm:p-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg bg-white/80 dark:bg-[#23221e]/80 border border-[#dedbd3] dark:border-[#383630] text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
           >
             <PrevIcon className="w-4 h-4" />
           </button>
           <button
             onClick={nextSlide}
             aria-label="Next Slide"
-            className="p-1.5 rounded-lg bg-white/80 dark:bg-[#23221e]/80 border border-[#dedbd3] dark:border-[#383630] text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            className="p-2 sm:p-1.5 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg bg-white/80 dark:bg-[#23221e]/80 border border-[#dedbd3] dark:border-[#383630] text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
           >
             <NextIcon className="w-4 h-4" />
           </button>

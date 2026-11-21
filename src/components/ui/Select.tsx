@@ -51,7 +51,7 @@ export const Select: React.FC<SelectProps> = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-white dark:bg-[#1b1a17] border border-[#dedbd3] dark:border-[#383630] text-sm font-medium text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-[#8e8672]/40 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-white dark:bg-[#1b1a17] border border-[#dedbd3] dark:border-[#383630] text-sm font-medium text-start shadow-sm focus:outline-none focus:ring-2 focus:ring-[#8e8672]/40 transition-colors min-h-[44px]"
       >
         <div className="flex items-center gap-2 truncate">
           {selectedOption?.icon && <span>{selectedOption.icon}</span>}
@@ -87,7 +87,7 @@ export const Select: React.FC<SelectProps> = ({
                     setIsOpen(false);
                   }}
                   className={cn(
-                    "w-full flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-colors text-left",
+                    "w-full flex items-center justify-between px-3 py-2.5 text-sm rounded-lg transition-colors text-start min-h-[40px]",
                     isSelected
                       ? "bg-[#8e8672]/15 text-[#8e8672] dark:text-[#d0c8bd] font-semibold"
                       : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"

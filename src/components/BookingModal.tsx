@@ -178,17 +178,17 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={resetModalState}
-      className="max-w-2xl max-h-[92vh] overflow-y-auto"
+      className="w-[95vw] sm:max-w-2xl max-h-[88vh] overflow-y-auto p-4 sm:p-6"
       title={
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#8e8672]/20 text-[#8e8672] flex items-center justify-center shrink-0">
             <Calendar className="w-5 h-5" />
           </div>
-          <div>
-            <div className="text-base font-bold text-[#12110f] dark:text-white">
+          <div className="min-w-0">
+            <div className="text-sm sm:text-base font-bold text-[#12110f] dark:text-white truncate">
               {language === 'ar' ? `حجز موعد كشف - ${doctor.name.ar}` : `Book Appointment - ${doctor.name.en}`}
             </div>
-            <div className="text-xs text-neutral-500 font-normal">
+            <div className="text-xs text-neutral-500 font-normal truncate">
               {doctor.specialtyName[language]} • {doctor.floor[language]}
             </div>
           </div>
@@ -435,12 +435,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     {language === 'ar' ? 'تاريخ الحجز:' : 'Booking Date:'}
                   </label>
                   <div className="relative">
-                    <Calendar className="w-4 h-4 absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                    <Calendar className="w-4 h-4 absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" />
                     <input
                       type="date"
                       value={bookingDate}
                       onChange={(e) => setBookingDate(e.target.value)}
-                      className="w-full pl-9 rtl:pl-4 rtl:pr-9 pr-4 py-2 rounded-xl bg-white dark:bg-[#201f1b] border border-[#dedbd3] dark:border-[#383630] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#8e8672]/40"
+                      className="w-full pl-9 rtl:pl-4 rtl:pr-9 pr-4 py-2.5 rounded-xl bg-white dark:bg-[#201f1b] border border-[#dedbd3] dark:border-[#383630] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#8e8672]/40 min-h-[44px]"
                     />
                   </div>
                 </div>
@@ -455,7 +455,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     <select
                       value={timeSlot}
                       onChange={(e) => setTimeSlot(e.target.value)}
-                      className="w-full pl-9 rtl:pl-4 rtl:pr-9 pr-4 py-2 rounded-xl bg-white dark:bg-[#201f1b] border border-[#dedbd3] dark:border-[#383630] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#8e8672]/40 text-[#12110f] dark:text-white"
+                      className="w-full pl-9 rtl:pl-4 rtl:pr-9 pr-4 py-2.5 rounded-xl bg-white dark:bg-[#201f1b] border border-[#dedbd3] dark:border-[#383630] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#8e8672]/40 text-[#12110f] dark:text-white min-h-[44px]"
                     >
                       <option value="06:30 PM">06:30 PM</option>
                       <option value="07:00 PM">07:00 PM</option>
@@ -482,11 +482,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </div>
 
               {/* Payment Method Tabs */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('card')}
-                  className={`py-2.5 px-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all ${
+                  className={`min-h-[44px] py-2.5 px-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all ${
                     paymentMethod === 'card'
                       ? 'bg-[#8e8672] text-white border-[#8e8672] shadow-sm'
                       : 'bg-white dark:bg-[#201f1b] text-neutral-700 dark:text-neutral-300 border-[#dedbd3] dark:border-[#383630]'
@@ -499,7 +499,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('instapay')}
-                  className={`py-2.5 px-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all ${
+                  className={`min-h-[44px] py-2.5 px-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all ${
                     paymentMethod === 'instapay'
                       ? 'bg-purple-700 text-white border-purple-700 shadow-sm'
                       : 'bg-white dark:bg-[#201f1b] text-neutral-700 dark:text-neutral-300 border-[#dedbd3] dark:border-[#383630]'
@@ -582,21 +582,21 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   animate={{ opacity: 1, height: 'auto' }}
                   className="p-4 rounded-2xl bg-purple-500/10 dark:bg-purple-950/30 border border-purple-500/30 space-y-4"
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-purple-500/20 pb-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-purple-500/20 pb-3">
                     <div>
                       <span className="text-[11px] font-bold text-purple-900 dark:text-purple-300 block">
                         {language === 'ar' ? 'عنوان الدفع الخاص بالعيادة (InstaPay Handle):' : 'Clinic InstaPay Address:'}
                       </span>
-                      <span className="font-mono font-black text-sm text-[#12110f] dark:text-white">
+                      <span className="font-mono font-black text-sm text-[#12110f] dark:text-white break-all">
                         {instaHandle}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2 pt-1 sm:pt-0">
                       <button
                         type="button"
                         onClick={handleCopyInstaHandle}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#201f1b] border border-purple-500/30 text-purple-700 dark:text-purple-300 text-xs font-bold hover:bg-purple-50"
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-white dark:bg-[#201f1b] border border-purple-500/30 text-purple-700 dark:text-purple-300 text-xs font-bold hover:bg-purple-50 min-h-[40px]"
                       >
                         {copiedInstaHandle ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                         <span>{copiedInstaHandle ? (language === 'ar' ? 'تم النسخ' : 'Copied') : (language === 'ar' ? 'نسخ' : 'Copy')}</span>
@@ -606,10 +606,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                         href="https://instapay.eg"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold shadow-sm"
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold shadow-sm min-h-[40px]"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
-                        <span>{language === 'ar' ? 'افتح تطبيق إنستاباي' : 'Open InstaPay'}</span>
+                        <span>{language === 'ar' ? 'افتح إنستاباي' : 'Open InstaPay'}</span>
                       </a>
                     </div>
                   </div>
