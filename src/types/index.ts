@@ -39,6 +39,7 @@ export interface CityMallStore {
   floor: { ar: string; en: string };
   description: { ar: string; en: string };
   badge?: { ar: string; en: string };
+  websiteUrl?: string;
 }
 
 export interface DoctorProfile {

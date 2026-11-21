@@ -324,7 +324,8 @@ export const cityMallStores: CityMallStore[] = [
       ar: 'سوبر ماركت عملاق في الدور الأرضي يوفر كافة المنتجات الغذائية، الأجبان، الخضروات، والسلع والمستلزمات المنزلية اليومية بأسعار تنافسية.',
       en: 'Comprehensive hypermarket on the ground floor providing fresh produce, groceries, dairy, household essentials, and daily family necessities.'
     },
-    badge: { ar: 'هايبر ماركت رئيسي', en: 'Anchor Store' }
+    badge: { ar: 'هايبر ماركت رئيسي', en: 'Anchor Store' },
+    websiteUrl: 'https://www.carrefouregypt.com'
   },
   // Fashion
   {
@@ -336,7 +337,8 @@ export const cityMallStores: CityMallStore[] = [
       ar: 'العلامة التجارية العالمية الشهيرة لبيع الملابس الكاجوال واليومية العصرية للرجال، النساء، والأطفال بأسعار مناسبة.',
       en: 'Renowned international fashion brand offering casual daily wear, workwear, and modern apparel for men, women, and kids.'
     },
-    badge: { ar: 'علامة دولية', en: 'Global Brand' }
+    badge: { ar: 'علامة دولية', en: 'Global Brand' },
+    websiteUrl: 'https://www.lcwaikiki.eg'
   },
   {
     id: 'defacto',
@@ -347,6 +349,7 @@ export const cityMallStores: CityMallStore[] = [
       ar: 'متجر تركي متألق للملابس العصرية والكاجوال لمختلف الأعمار والشباب بأحدث صيحات الموضة العالمية.',
       en: 'Trendy Turkish fashion chain offering youthful, comfortable, and contemporary apparel collections.'
     },
+    websiteUrl: 'https://eg.defacto.com'
   },
   {
     id: 'mens-club',
@@ -357,6 +360,7 @@ export const cityMallStores: CityMallStore[] = [
       ar: 'متجر متخصص في أرقى الأزياء الرجالية الكاجوال والكلاسيك والبدل الرسمية والقمصان الأنيقة.',
       en: 'Specialized store in refined menswear, smart casual clothing, formal suits, and tailored shirts.'
     },
+    websiteUrl: 'https://mensclubeg.com'
   },
   {
     id: 'mini-townteam',
@@ -367,6 +371,7 @@ export const cityMallStores: CityMallStore[] = [
       ar: 'فرع مخصص لملابس الشباب والأولاد والأطفال الكاجوال ذات الطابع الرياضي والأنيق.',
       en: 'Dedicated boutique for energetic youth, boys, and children casual wear.'
     },
+    websiteUrl: 'https://townteam.com'
   },
   {
     id: 'tomato-outlet',
@@ -377,7 +382,8 @@ export const cityMallStores: CityMallStore[] = [
       ar: 'فرع يقدم تشكيلة ضخمة من الملابس العصرية لجميع أفراد الأسرة بأسعار مخفضة وتصفيات مميزة.',
       en: 'Value-oriented outlet store providing substantial discounts on branded apparel and casual essentials.'
     },
-    badge: { ar: 'عروض وتخفيضات', en: 'Outlet Discounts' }
+    badge: { ar: 'عروض وتخفيضات', en: 'Outlet Discounts' },
+    websiteUrl: 'https://tomato.com.eg'
   },
   {
     id: 'activ',
@@ -388,6 +394,7 @@ export const cityMallStores: CityMallStore[] = [
       ar: 'متجر رائد متخصص في الملابس والأحذية الرياضية الأصلية ومستلزمات التدريب واللياقة البدنية.',
       en: 'Leading activewear store featuring authentic sportswear, running shoes, training gear, and fitness accessories.'
     },
+    websiteUrl: 'https://activaboualaa.com'
   },
   {
     id: 'livora-store',
@@ -419,7 +426,8 @@ export const cityMallStores: CityMallStore[] = [
       ar: 'معرض شامل لبيع أحدث الأجهزة الكهربائية والمنزلية، شاشات التلفزيون، الموبايلات، اللابتوبات، مع خطط تقسيط ميسرة.',
       en: 'Prime electronics megastore displaying the latest home appliances, smart TVs, mobile phones, laptops, and flexible financing.'
     },
-    badge: { ar: 'أجهزة وإلكترونيات', en: 'Tech Leader' }
+    badge: { ar: 'أجهزة وإلكترونيات', en: 'Tech Leader' },
+    websiteUrl: 'https://btech.com'
   },
   {
     id: 'mattresses-furnishings',
@@ -434,7 +442,7 @@ export const cityMallStores: CityMallStore[] = [
   // Jewelry
   {
     id: 'g-stone',
-    name: { ar: 'جي ستون (G Stone)', en: 'G Stone Fine Jewelry' },
+    name: { ar: 'جي ستون للمجوهرات (G Stone)', en: 'G Stone Fine Jewelry' },
     category: 'jewelry',
     floor: { ar: 'الدور الأرضي', en: 'Ground Floor' },
     description: {
@@ -444,7 +452,7 @@ export const cityMallStores: CityMallStore[] = [
   },
   {
     id: 'gallery-dahab',
-    name: { ar: 'جاليري دهب (Gallery Dahab)', en: 'Gallery Dahab' },
+    name: { ar: 'جاليري دهب للمجوهرات (Gallery Dahab)', en: 'Gallery Dahab Jewelry' },
     category: 'jewelry',
     floor: { ar: 'الدور الثالث', en: '3rd Floor' },
     description: {
@@ -462,7 +470,8 @@ export const cityMallStores: CityMallStore[] = [
       ar: 'فرع عريق لبيع أشهر وأشهى الحلويات الشرقية والغربية، التورتات الفاخرة، كعك العيد، والمخبوزات الطازجة.',
       en: 'Historic Egyptian patisserie renowned for traditional oriental sweets, custom celebration cakes, and fresh baked delicacies.'
     },
-    badge: { ar: 'حلويات عريقة', en: 'Heritage Sweets' }
+    badge: { ar: 'حلويات عريقة', en: 'Heritage Sweets' },
+    websiteUrl: 'https://elabdpatisserie.com'
   },
   {
     id: 'presto-cafe',
