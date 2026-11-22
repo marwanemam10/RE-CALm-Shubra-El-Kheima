@@ -94,4 +94,6 @@ export interface ParkingSlot {
   isOccupied: boolean;
   isReservedByUser?: boolean;
   vehicleType?: 'car' | 'ev' | 'disabled';
+  licensePlate?: string;
+  reservedAt?: number;
 }
