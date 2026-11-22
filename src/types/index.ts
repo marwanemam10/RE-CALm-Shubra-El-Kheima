@@ -32,6 +32,15 @@ export interface OpenAirVenue {
   sampleReviews?: VenueReview[];
 }
 
+export interface CityMallProduct {
+  id: string;
+  name: { ar: string; en: string };
+  originalPrice: number;
+  discountPercentage: number;
+  discountedPrice: number;
+  imageCandidates: string[];
+}
+
 export interface CityMallStore {
   id: string;
   name: { ar: string; en: string };
@@ -40,6 +49,8 @@ export interface CityMallStore {
   description: { ar: string; en: string };
   badge?: { ar: string; en: string };
   websiteUrl?: string;
+  hasOffer20?: boolean;
+  products?: CityMallProduct[];
 }
 
 export interface DoctorProfile {

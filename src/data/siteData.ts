@@ -4,8 +4,10 @@ import {
   DoctorProfile, 
   BusRoute,
   ParkingSlot,
-  PharmacyInfo 
+  PharmacyInfo,
+  CityMallProduct
 } from '../types';
+import { carrefourProducts, lcWaikikiProducts, elAbdProducts } from './cityMallProducts';
 
 export const siteImages = {
   hero: '/data/opening-image.jpg',
@@ -325,7 +327,9 @@ export const cityMallStores: CityMallStore[] = [
       en: 'Comprehensive hypermarket on the ground floor providing fresh produce, groceries, dairy, household essentials, and daily family necessities.'
     },
     badge: { ar: 'هايبر ماركت رئيسي', en: 'Anchor Store' },
-    websiteUrl: 'https://www.carrefouregypt.com'
+    websiteUrl: 'https://www.carrefouregypt.com',
+    hasOffer20: true,
+    products: carrefourProducts
   },
   // Fashion
   {
@@ -338,7 +342,9 @@ export const cityMallStores: CityMallStore[] = [
       en: 'Renowned international fashion brand offering casual daily wear, workwear, and modern apparel for men, women, and kids.'
     },
     badge: { ar: 'علامة دولية', en: 'Global Brand' },
-    websiteUrl: 'https://www.lcwaikiki.eg'
+    websiteUrl: 'https://www.lcwaikiki.eg',
+    hasOffer20: true,
+    products: lcWaikikiProducts
   },
   {
     id: 'defacto',
@@ -471,7 +477,9 @@ export const cityMallStores: CityMallStore[] = [
       en: 'Historic Egyptian patisserie renowned for traditional oriental sweets, custom celebration cakes, and fresh baked delicacies.'
     },
     badge: { ar: 'حلويات عريقة', en: 'Heritage Sweets' },
-    websiteUrl: 'https://elabdpatisserie.com'
+    websiteUrl: 'https://elabdpatisserie.com',
+    hasOffer20: true,
+    products: elAbdProducts
   },
   {
     id: 'presto-cafe',

@@ -23,19 +23,61 @@ import {
   MessageCircle,
   Building2,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Percent,
+  X
 } from 'lucide-react';
 import { useAppThemeLanguage } from '../context/ThemeLanguageContext';
 import { cityMallCategories, cityMallStores, siteImages } from '../data/siteData';
 import { Tabs } from '../components/ui/Tabs';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
-import { CityMallStore } from '../types';
+import { Modal } from '../components/ui/Modal';
+import { CityMallStore, CityMallProduct } from '../types';
+
+// Robust, multi-extension & multi-folder image component with graceful fallback
+const SmartCatalogImage: React.FC<{
+  candidates: string[];
+  alt: string;
+  className?: string;
+}> = ({ candidates, alt, className }) => {
+  const [candidateIndex, setCandidateIndex] = useState(0);
+  const [hasError, setHasError] = useState(false);
+
+  const handleError = () => {
+    if (candidateIndex + 1 < candidates.length) {
+      setCandidateIndex((prev) => prev + 1);
+    } else {
+      setHasError(true);
+    }
+  };
+
+  if (hasError || candidates.length === 0) {
+    return (
+      <div className={`w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900 text-neutral-400 p-3 text-center ${className}`}>
+        <ShoppingBag className="w-8 h-8 opacity-40 mb-1" />
+        <span className="text-[10px] font-bold opacity-70 line-clamp-2">{alt}</span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={encodeURI(candidates[candidateIndex])}
+      alt={alt}
+      loading="lazy"
+      onError={handleError}
+      className={className}
+    />
+  );
+};
 
 export const CityMallPage: React.FC = () => {
   const { language, t } = useAppThemeLanguage();
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCatalogStore, setSelectedCatalogStore] = useState<CityMallStore | null>(null);
+  const [productSearchQuery, setProductSearchQuery] = useState('');
 
   const filteredStores = cityMallStores.filter((store) => {
     const matchesCategory = activeCategory === 'all' || store.category === activeCategory;
@@ -78,8 +120,24 @@ export const CityMallPage: React.FC = () => {
       : 'Hello, I would like to inquire about commercial shops available for rent in City Mall Shubra El-Kheima.'
   )}`;
 
+  const formatPrice = (price: number, lang: 'ar' | 'en') => {
+    const formatted = price % 1 === 0 ? price.toLocaleString() : price.toFixed(2);
+    return lang === 'ar' ? `${formatted} ج.م` : `${formatted} EGP`;
+  };
+
+  // Filter products inside modal
+  const modalProducts: CityMallProduct[] = (selectedCatalogStore?.products || []).filter((p) => {
+    if (!productSearchQuery.trim()) return true;
+    const q = productSearchQuery.toLowerCase();
+    return (
+      p.name[language].toLowerCase().includes(q) ||
+      p.name.ar.toLowerCase().includes(q) ||
+      p.name.en.toLowerCase().includes(q)
+    );
+  });
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-12 py-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-12 py-6 overflow-x-hidden">
       
       {/* 1. Header Banner */}
       <div className="relative rounded-3xl overflow-hidden border border-[#e2dfd8] dark:border-[#33312b] shadow-xl">
@@ -211,8 +269,8 @@ export const CityMallPage: React.FC = () => {
             </h2>
             <p className="text-xs sm:text-sm text-neutral-500 mt-1">
               {language === 'ar'
-                ? 'استعرض الأقسام وتعرف على موقع كل علامة تجارية والدور الخاص بها مع روابط مواقعها الرسمية'
-                : 'Browse departments and discover the exact floor location of each store with official website links'}
+                ? 'استعرض الأقسام وتعرف على موقع كل متجر مع عروض الخصم 20% الحصرية لفرع المول'
+                : 'Browse departments and explore store locations with exclusive 20% City Mall branch offers'}
             </p>
           </div>
 
@@ -284,6 +342,16 @@ export const CityMallPage: React.FC = () => {
                   </div>
                 </div>
 
+                {/* 20% Mall Branch Discount Highlight Badge */}
+                {store.hasOffer20 && (
+                  <div className="pt-1">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white shadow-xs">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+                      <span>{language === 'ar' ? 'خصم 20% داخل فرع المول' : '20% Mall Branch Discount'}</span>
+                    </span>
+                  </div>
+                )}
+
                 {/* Name & Desc */}
                 <div>
                   <h3 className="text-lg sm:text-xl font-bold text-[#12110f] dark:text-[#f6f6f4] tracking-tight">
@@ -295,8 +363,23 @@ export const CityMallPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Action Bar: Official Website Button OR Visit Branch Notice */}
-              <div className="pt-4 border-t border-[#f0ede6] dark:border-[#2b2a26] space-y-3">
+              {/* Action Bar: View Products Button + Official Website Button */}
+              <div className="pt-4 border-t border-[#f0ede6] dark:border-[#2b2a26] space-y-2.5">
+                {/* 20% Offer Product Catalog Modal Button */}
+                {store.hasOffer20 && store.products && store.products.length > 0 && (
+                  <button
+                    onClick={() => {
+                      setSelectedCatalogStore(store);
+                      setProductSearchQuery('');
+                    }}
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white text-xs font-black shadow-sm transition-all active:scale-95 min-h-[44px]"
+                  >
+                    <Sparkles className="w-4 h-4 text-amber-300 shrink-0" />
+                    <span>{language === 'ar' ? 'عرض المنتجات وخصم 20%' : 'View Products & 20% Offer'}</span>
+                  </button>
+                )}
+
+                {/* Official Website Button OR Visit Branch Notice */}
                 {store.websiteUrl ? (
                   <a
                     href={store.websiteUrl}
@@ -319,7 +402,7 @@ export const CityMallPage: React.FC = () => {
                 )}
 
                 {/* Floor Info Footer */}
-                <div className="flex items-center justify-between text-[11px] text-neutral-400">
+                <div className="flex items-center justify-between text-[11px] text-neutral-400 pt-1">
                   <span className="font-medium">
                     {language === 'ar' ? 'سيتي مول شبرا الخيمة' : 'City Mall Shubra'}
                   </span>
@@ -345,6 +428,142 @@ export const CityMallPage: React.FC = () => {
           </p>
         </div>
       )}
+
+      {/* 6. Sleek Product Catalog Modal with 20% Discount */}
+      <Modal
+        isOpen={!!selectedCatalogStore}
+        onClose={() => setSelectedCatalogStore(null)}
+        className="w-[95vw] sm:max-w-4xl max-h-[90vh] p-3.5 sm:p-6"
+        title={
+          selectedCatalogStore ? (
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-[#8e8672]/20 text-[#8e8672] flex items-center justify-center shrink-0">
+                <ShoppingBag className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-sm sm:text-base font-black block">
+                  {selectedCatalogStore.name[language]}
+                </span>
+                <span className="text-[11px] text-neutral-500 font-normal block">
+                  {language === 'ar' ? 'فرع سيتي مول شبرا الخيمة' : 'City Mall Shubra El-Kheima Branch'}
+                </span>
+              </div>
+            </div>
+          ) : ''
+        }
+      >
+        {selectedCatalogStore && (
+          <div className="space-y-4 sm:space-y-5">
+            {/* 20% Offer Banner inside Modal */}
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-amber-500/15 to-emerald-500/15 border-2 border-emerald-500/30 flex items-start sm:items-center justify-between gap-3 text-emerald-950 dark:text-emerald-100 shadow-xs">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <Percent className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="font-black text-xs sm:text-sm block">
+                    {language === 'ar'
+                      ? 'خصم خاص 20% على جميع هذه المنتجات عند الشراء من فرع سيتي مول'
+                      : 'Exclusive 20% discount on all listed products when purchased at the City Mall branch'}
+                  </span>
+                  <span className="text-[11px] text-neutral-600 dark:text-neutral-300 mt-0.5 block">
+                    {language === 'ar'
+                      ? 'يسري هذا الخصم الحصري عند الشراء من الكاشير داخل فرع المول مباشرة'
+                      : 'This exclusive discount is applied at checkout when shopping at the mall branch'}
+                  </span>
+                </div>
+              </div>
+              <div className="hidden sm:flex px-3 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-black shrink-0 shadow-sm animate-pulse">
+                -20% OFF
+              </div>
+            </div>
+
+            {/* Product Search & Counter */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+              <div className="relative w-full sm:w-72">
+                <Search className="w-4 h-4 absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                <input
+                  type="text"
+                  value={productSearchQuery}
+                  onChange={(e) => setProductSearchQuery(e.target.value)}
+                  placeholder={language === 'ar' ? 'بحث في منتجات المتجر...' : 'Search products in this store...'}
+                  className="w-full pl-9 rtl:pl-4 rtl:pr-9 pr-4 py-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#8e8672]/40 min-h-[40px]"
+                />
+              </div>
+
+              <div className="text-xs font-semibold text-neutral-500">
+                {language === 'ar'
+                  ? `عرض ${modalProducts.length} منتج متاح بالخصم`
+                  : `Showing ${modalProducts.length} discounted products`}
+              </div>
+            </div>
+
+            {/* Products Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-4 max-h-[55vh] overflow-y-auto pr-1 rtl:pr-0 rtl:pl-1 scrollbar-thin">
+              {modalProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className="rounded-2xl bg-white dark:bg-[#1f1e1a] border border-[#e6e4df] dark:border-[#36342e] p-2.5 sm:p-3 shadow-xs hover:shadow-md hover:border-[#8e8672]/60 transition-all duration-200 flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Image Container with -20% Pill Badge */}
+                    <div className="relative aspect-square rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+                      <SmartCatalogImage
+                        candidates={product.imageCandidates}
+                        alt={product.name[language]}
+                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <span className="absolute top-2 left-2 rtl:left-auto rtl:right-2 z-10 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-black bg-rose-600 text-white shadow-md">
+                        -20%
+                      </span>
+                    </div>
+
+                    {/* Product Name */}
+                    <h4 className="font-bold text-xs sm:text-sm text-[#12110f] dark:text-[#f6f6f4] leading-snug mt-2.5 line-clamp-2 min-h-[2.4rem]">
+                      {product.name[language]}
+                    </h4>
+                  </div>
+
+                  {/* Pricing Details */}
+                  <div className="pt-2 mt-2 border-t border-neutral-100 dark:border-neutral-800/80 space-y-0.5">
+                    <div className="flex items-center justify-between text-[11px] text-neutral-400">
+                      <span>{language === 'ar' ? 'السعر الأصلي:' : 'Original:'}</span>
+                      <span className="line-through font-semibold">
+                        {formatPrice(product.originalPrice, language)}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400">
+                        {language === 'ar' ? 'بعد خصم 20%:' : 'After 20% Off:'}
+                      </span>
+                      <span className="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400 font-mono">
+                        {formatPrice(product.discountedPrice, language)}
+                      </span>
+                    </div>
+
+                    <div className="pt-1 text-[9px] text-center font-bold text-amber-700 dark:text-amber-300 bg-amber-500/10 rounded-md py-0.5">
+                      {language === 'ar' ? 'حصرياً بفرع سيتي مول' : 'City Mall Exclusive'}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Empty Search inside Modal */}
+            {modalProducts.length === 0 && (
+              <div className="text-center py-10 text-neutral-400 space-y-2">
+                <ShoppingBag className="w-10 h-10 mx-auto opacity-40" />
+                <p className="text-xs font-medium">
+                  {language === 'ar'
+                    ? 'لم يتم العثور على منتجات مطابقة للبحث'
+                    : 'No products matched your search in this store'}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </Modal>
 
     </div>
   );
