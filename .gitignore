@@ -24,8 +24,7 @@ dist-ssr
 *.sw?
 
 # Raw asset sources
-new image/
-public/new image/
+/new image/
 
 
 
