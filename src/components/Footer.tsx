@@ -73,6 +73,17 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <button 
+                  onClick={() => handleNav('hero-plaza')} 
+                  className="hover:text-[#8e8672] dark:hover:text-[#a8a08d] transition-colors inline-flex items-center gap-1.5"
+                >
+                  <span>{language === 'ar' ? 'مول هيرو بلازا' : 'Hero Plaza Mall'}</span>
+                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-black bg-amber-500/20 text-amber-700 dark:text-amber-300">
+                    {language === 'ar' ? 'قريباً' : 'Upcoming'}
+                  </span>
+                </button>
+              </li>
+              <li>
+                <button 
                   onClick={() => handleNav('doctors-tower')} 
                   className="hover:text-[#8e8672] dark:hover:text-[#a8a08d] transition-colors"
                 >

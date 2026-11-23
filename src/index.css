@@ -76,3 +76,12 @@ body {
     linear-gradient(to right, rgba(144, 166, 156, 0.08) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(144, 166, 156, 0.08) 1px, transparent 1px);
 }
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
