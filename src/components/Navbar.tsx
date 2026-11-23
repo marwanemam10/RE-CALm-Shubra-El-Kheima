@@ -33,9 +33,15 @@ export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [navDropdownOpen, setNavDropdownOpen] = useState(false);
 
-  const navItems: { id: NavView; label: string; icon: React.ReactNode }[] = [
+  const navItems: { id: NavView; label: string; icon: React.ReactNode; badge?: string }[] = [
     { id: 'open-air-mall', label: t('openAirMall'), icon: <Coffee className="w-4 h-4" /> },
     { id: 'city-mall', label: t('cityMall'), icon: <ShoppingBag className="w-4 h-4" /> },
+    { 
+      id: 'hero-plaza', 
+      label: t('heroPlaza'), 
+      icon: <Building2 className="w-4 h-4 text-amber-600 dark:text-amber-400" />,
+      badge: language === 'ar' ? 'تحت الإنشاء' : 'Upcoming'
+    },
     { id: 'doctors-tower', label: t('doctorsTower'), icon: <Stethoscope className="w-4 h-4" /> },
     { id: 'transport', label: t('publicTransport'), icon: <Bus className="w-4 h-4" /> },
     { id: 'parking', label: t('smartParking'), icon: <Car className="w-4 h-4" /> },
@@ -107,7 +113,7 @@ export const Navbar: React.FC = () => {
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex items-center gap-1.5 px-2.5 xl:px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     isActive
                       ? 'bg-white dark:bg-[#23221e] text-[#12110f] dark:text-white shadow-sm'
                       : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
@@ -115,6 +121,11 @@ export const Navbar: React.FC = () => {
                 >
                   {item.icon}
                   <span>{item.label}</span>
+                  {item.badge && (
+                    <span className="px-1.5 py-0.5 rounded-full text-[9px] font-black bg-amber-500/20 text-amber-700 dark:text-amber-300">
+                      {item.badge}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -221,14 +232,25 @@ export const Navbar: React.FC = () => {
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`w-full flex items-center gap-3 p-3 rounded-xl text-sm font-semibold transition-all ${
+                  className={`w-full flex items-center justify-between p-3 rounded-xl text-sm font-semibold transition-all ${
                     isActive
                       ? 'bg-[#8e8672] text-white shadow-sm'
                       : 'hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-800 dark:text-neutral-200'
                   }`}
                 >
-                  {item.icon}
-                  <span>{item.label}</span>
+                  <div className="flex items-center gap-3">
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </div>
+                  {item.badge && (
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                      isActive
+                        ? 'bg-white/20 text-white'
+                        : 'bg-amber-500/15 text-amber-700 dark:text-amber-300'
+                    }`}>
+                      {item.badge}
+                    </span>
+                  )}
                 </button>
               );
             })}

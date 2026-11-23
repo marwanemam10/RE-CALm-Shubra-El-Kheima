@@ -61,6 +61,8 @@ export const LandingPage: React.FC = () => {
         return <Bus className="w-6 h-6" />;
       case 'parking':
         return <Car className="w-6 h-6" />;
+      case 'hero-plaza':
+        return <Building2 className="w-6 h-6 text-amber-500" />;
       default:
         return <Building2 className="w-6 h-6" />;
     }
@@ -255,7 +257,7 @@ export const LandingPage: React.FC = () => {
           <div className="space-y-2 max-w-2xl">
             <div className="flex items-center gap-2">
               <Badge variant="accent">
-                {language === 'ar' ? '5 وجهات استراتيجية' : '5 Strategic Hubs'}
+                {language === 'ar' ? '6 وجهات استراتيجية ومشاريع واعدة' : '6 Strategic Hubs & Developments'}
               </Badge>
               <span className="text-xs font-semibold text-neutral-500">
                 {language === 'ar' ? 'نظام متكامل' : 'Integrated Ecosystem'}
@@ -301,15 +303,32 @@ export const LandingPage: React.FC = () => {
                   <img
                     src={dest.image}
                     alt={dest.title[language]}
+                    onError={(e) => {
+                      if (dest.id === 'hero-plaza') {
+                        const target = e.currentTarget;
+                        if (!target.src.includes('plaza%20mall.jpg') && !target.src.includes('plaza mall.jpg')) {
+                          target.src = '/new image/plaza mall.jpg';
+                        } else if (!target.src.includes('hero%20plaza%20mall.jpg')) {
+                          target.src = '/new image/hero plaza mall.jpg';
+                        }
+                      }
+                    }}
                     className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                   
                   {/* Top Badge */}
                   <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/90 dark:bg-black/80 text-[#12110f] dark:text-white backdrop-blur-md shadow-sm">
-                      {dest.tag[language]}
-                    </span>
+                    {dest.id === 'hero-plaza' ? (
+                      <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-500 text-black backdrop-blur-md shadow-md flex items-center gap-1.5 animate-pulse">
+                        <span className="w-2 h-2 rounded-full bg-black animate-ping" />
+                        {language === 'ar' ? 'تحت الإنشاء' : 'Under Construction'}
+                      </span>
+                    ) : (
+                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/90 dark:bg-black/80 text-[#12110f] dark:text-white backdrop-blur-md shadow-sm">
+                        {dest.tag[language]}
+                      </span>
+                    )}
                     <div className="w-10 h-10 rounded-full bg-white/90 dark:bg-[#1b1a17]/90 text-[#8e8672] flex items-center justify-center shadow-md backdrop-blur-md group-hover:bg-[#8e8672] group-hover:text-white transition-colors duration-300">
                       {getDestinationIcon(dest.id)}
                     </div>

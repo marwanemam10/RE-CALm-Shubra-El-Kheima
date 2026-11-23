@@ -9,6 +9,7 @@ import { CityMallPage } from './pages/CityMallPage';
 import { DoctorsTowerPage } from './pages/DoctorsTowerPage';
 import { PublicTransportPage } from './pages/PublicTransportPage';
 import { SmartParkingPage } from './pages/SmartParkingPage';
+import { HeroPlazaPage } from './pages/HeroPlazaPage';
 
 export const App: React.FC = () => {
   const { activeView } = useAppThemeLanguage();
@@ -19,6 +20,8 @@ export const App: React.FC = () => {
         return <OpenAirMallPage key="open-air-mall" />;
       case 'city-mall':
         return <CityMallPage key="city-mall" />;
+      case 'hero-plaza':
+        return <HeroPlazaPage key="hero-plaza" />;
       case 'doctors-tower':
         return <DoctorsTowerPage key="doctors-tower" />;
       case 'transport':

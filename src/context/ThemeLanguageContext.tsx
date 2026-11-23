@@ -28,6 +28,9 @@ const translations: Record<string, { ar: string; en: string }> = {
   doctorsTower: { ar: 'برج الأطباء', en: "Doctors' Tower" },
   publicTransport: { ar: 'النقل العام والمواقف', en: 'Public Transport Hub' },
   smartParking: { ar: 'الباركينج الذكي', en: 'Smart Parking' },
+  heroPlaza: { ar: 'هيرو بلازا مول', en: 'Hero Plaza Mall' },
+  underConstruction: { ar: 'تحت الإنشاء', en: 'Under Construction' },
+  commercialAndAdmin: { ar: 'محلات تجارية ومكاتب إدارية', en: 'Commercial Shops & Administrative Offices' },
 
   // Mall & Doctor labels
   workingHours: { ar: 'مواعيد العمل', en: 'Working Hours' },

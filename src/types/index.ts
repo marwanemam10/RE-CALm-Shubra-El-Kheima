@@ -7,7 +7,8 @@ export type NavView =
   | 'city-mall' 
   | 'doctors-tower' 
   | 'transport' 
-  | 'parking';
+  | 'parking'
+  | 'hero-plaza';
 
 export interface VenueReview {
   id: string;

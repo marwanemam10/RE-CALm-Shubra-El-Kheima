@@ -17,6 +17,7 @@ export const siteImages = {
   transport: '/data/transport.jpg',
   parking: '/data/parking.jpg',
   pharmacy: '/doctors/pharmacy-ezaby.jpg',
+  heroPlaza: '/new image/plaza mall.jpg',
 };
 
 export const heroStats = {
@@ -94,6 +95,19 @@ export const hubDestinations = [
     image: siteImages.parking,
     tag: { ar: 'محاكاة هندسية', en: 'Smart Tech' },
     accent: '#22c55e',
+  },
+  {
+    id: 'hero-plaza',
+    title: { ar: 'هيرو بلازا مول', en: 'Hero Plaza Mall' },
+    subtitle: { ar: 'مول تجاري وإداري متكامل', en: 'Commercial & Administrative Plaza' },
+    desc: { 
+      ar: 'مشروع استثماري واعد تحت الإنشاء يضم محلات تجارية ومكاتب إدارية بمساحات تبدأ من 50 م² بموقع استراتيجي متميز في شبرا الخيمة.',
+      en: 'An upcoming premier commercial & administrative development under construction, offering retail shops and offices starting from 50 m².'
+    },
+    image: siteImages.heroPlaza,
+    tag: { ar: 'تحت الإنشاء', en: 'Under Construction' },
+    accent: '#d97706',
+    isUnderConstruction: true,
   },
 ];
 
