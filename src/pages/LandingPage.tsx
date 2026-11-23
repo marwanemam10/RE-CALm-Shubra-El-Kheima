@@ -252,7 +252,21 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Destinations Section Header */}
-      <section id="destinations-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <section id="destinations-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-12">
+        {/* Clickable Geographic Anchor Pill */}
+        <div className="flex justify-center mb-2 sm:mb-4">
+          <a
+            href="https://maps.app.goo.gl/46KKQGAUUDYkhuxR6"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium border border-stone-200/80 dark:border-white/15 bg-white/80 dark:bg-white/5 hover:bg-stone-100 dark:hover:bg-white/10 text-neutral-800 dark:text-neutral-200 shadow-sm transition-all hover:scale-105 active:scale-95 group"
+          >
+            <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform shrink-0" />
+            <span>{language === 'ar' ? 'الموقع • شبرا الخيمة' : 'Location • Shubra El-Kheima'}</span>
+            <ArrowUpRight className="w-3.5 h-3.5 text-neutral-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors shrink-0" />
+          </a>
+        </div>
+
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#e2dfd8] dark:border-[#33312b] pb-6">
           <div className="space-y-2 max-w-2xl">
             <div className="flex items-center gap-2">
