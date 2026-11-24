@@ -99,13 +99,29 @@ export interface BusRoute {
   fullRoute: { ar: string; en: string };
 }
 
+export type ParkingZone =
+  | 'perimeter-top-left'
+  | 'perimeter-top-right'
+  | 'perimeter-left'
+  | 'perimeter-right'
+  | 'perimeter-bottom'
+  | 'island-1-top'
+  | 'island-1-bottom'
+  | 'island-2-top'
+  | 'island-2-bottom'
+  | 'island-3-top'
+  | 'island-3-bottom'
+  | 'island-4-top'
+  | 'island-4-bottom';
+
 export interface ParkingSlot {
   id: string;
-  lane: 'A' | 'B' | 'C' | 'D';
+  lane: string;
+  zone: ParkingZone;
   number: number;
   isOccupied: boolean;
   isReservedByUser?: boolean;
-  vehicleType?: 'car' | 'ev' | 'disabled';
+  vehicleType: 'car' | 'ev' | 'disabled';
   licensePlate?: string;
   reservedAt?: number;
 }

@@ -4,6 +4,7 @@ import {
   DoctorProfile, 
   BusRoute,
   ParkingSlot,
+  ParkingZone,
   PharmacyInfo,
   CityMallProduct
 } from '../types';
@@ -1083,45 +1084,54 @@ export const busRoutes: BusRoute[] = [
   }
 ];
 
-// Initial parking spots state (Lane A, B, C, D)
+// Helper to generate realistic parking slots per architectural zone
+function generateZoneSlots(
+  prefix: string,
+  lane: string,
+  zone: ParkingZone,
+  count: number,
+  vehicleType: 'car' | 'ev' | 'disabled',
+  startNumber = 1,
+  occupiedMod = 4,
+  occupiedOffset = 1
+): ParkingSlot[] {
+  return Array.from({ length: count }, (_, idx) => {
+    const num = startNumber + idx;
+    const padded = num.toString().padStart(2, '0');
+    const isOccupied = occupiedMod > 0 ? idx % occupiedMod === occupiedOffset : false;
+    return {
+      id: `${prefix}-${padded}`,
+      lane,
+      zone,
+      number: num,
+      isOccupied,
+      vehicleType,
+    };
+  });
+}
+
+// Initial parking spots matching the architectural CAD blueprint
 export const initialParkingSlots: ParkingSlot[] = [
-  // Lane A (Near Open Air Mall entrance)
-  { id: 'A-01', lane: 'A', number: 1, isOccupied: false, vehicleType: 'ev' },
-  { id: 'A-02', lane: 'A', number: 2, isOccupied: true, vehicleType: 'car' },
-  { id: 'A-03', lane: 'A', number: 3, isOccupied: false, vehicleType: 'car' },
-  { id: 'A-04', lane: 'A', number: 4, isOccupied: false, vehicleType: 'disabled' },
-  { id: 'A-05', lane: 'A', number: 5, isOccupied: true, vehicleType: 'car' },
-  { id: 'A-06', lane: 'A', number: 6, isOccupied: false, vehicleType: 'car' },
-  { id: 'A-07', lane: 'A', number: 7, isOccupied: true, vehicleType: 'car' },
-  { id: 'A-08', lane: 'A', number: 8, isOccupied: false, vehicleType: 'car' },
+  // 1. Perimeter Outer Bays -> EV Charging Stations
+  ...generateZoneSlots('EV-T', 'EV-North', 'perimeter-top-left', 16, 'ev', 1, 5, 2),
+  ...generateZoneSlots('EV-T', 'EV-North', 'perimeter-top-right', 4, 'ev', 17, 4, 1),
+  ...generateZoneSlots('EV-L', 'EV-West', 'perimeter-left', 16, 'ev', 1, 4, 2),
+  ...generateZoneSlots('EV-R', 'EV-East', 'perimeter-right', 16, 'ev', 1, 5, 1),
+  ...generateZoneSlots('EV-B', 'EV-South', 'perimeter-bottom', 14, 'ev', 1, 5, 3),
 
-  // Lane B
-  { id: 'B-01', lane: 'B', number: 1, isOccupied: true, vehicleType: 'car' },
-  { id: 'B-02', lane: 'B', number: 2, isOccupied: false, vehicleType: 'car' },
-  { id: 'B-03', lane: 'B', number: 3, isOccupied: true, vehicleType: 'car' },
-  { id: 'B-04', lane: 'B', number: 4, isOccupied: false, vehicleType: 'ev' },
-  { id: 'B-05', lane: 'B', number: 5, isOccupied: false, vehicleType: 'car' },
-  { id: 'B-06', lane: 'B', number: 6, isOccupied: true, vehicleType: 'car' },
-  { id: 'B-07', lane: 'B', number: 7, isOccupied: false, vehicleType: 'car' },
-  { id: 'B-08', lane: 'B', number: 8, isOccupied: true, vehicleType: 'car' },
+  // 2. Central Island 1 (Top Row: Handicap | Bottom Row: Standard)
+  ...generateZoneSlots('H1', 'Island-1', 'island-1-top', 16, 'disabled', 1, 6, 2),
+  ...generateZoneSlots('A', 'A', 'island-1-bottom', 16, 'car', 1, 3, 1),
 
-  // Lane C
-  { id: 'C-01', lane: 'C', number: 1, isOccupied: false, vehicleType: 'car' },
-  { id: 'C-02', lane: 'C', number: 2, isOccupied: true, vehicleType: 'car' },
-  { id: 'C-03', lane: 'C', number: 3, isOccupied: false, vehicleType: 'car' },
-  { id: 'C-04', lane: 'C', number: 4, isOccupied: false, vehicleType: 'disabled' },
-  { id: 'C-05', lane: 'C', number: 5, isOccupied: true, vehicleType: 'car' },
-  { id: 'C-06', lane: 'C', number: 6, isOccupied: false, vehicleType: 'car' },
-  { id: 'C-07', lane: 'C', number: 7, isOccupied: false, vehicleType: 'ev' },
-  { id: 'C-08', lane: 'C', number: 8, isOccupied: true, vehicleType: 'car' },
+  // 3. Central Island 2 (Standard Cars)
+  ...generateZoneSlots('B', 'B', 'island-2-top', 16, 'car', 1, 3, 0),
+  ...generateZoneSlots('B', 'B', 'island-2-bottom', 16, 'car', 17, 4, 2),
 
-  // Lane D (Near Gate Out & City Mall Walkway)
-  { id: 'D-01', lane: 'D', number: 1, isOccupied: true, vehicleType: 'car' },
-  { id: 'D-02', lane: 'D', number: 2, isOccupied: false, vehicleType: 'car' },
-  { id: 'D-03', lane: 'D', number: 3, isOccupied: false, vehicleType: 'car' },
-  { id: 'D-04', lane: 'D', number: 4, isOccupied: true, vehicleType: 'car' },
-  { id: 'D-05', lane: 'D', number: 5, isOccupied: false, vehicleType: 'car' },
-  { id: 'D-06', lane: 'D', number: 6, isOccupied: false, vehicleType: 'car' },
-  { id: 'D-07', lane: 'D', number: 7, isOccupied: true, vehicleType: 'car' },
-  { id: 'D-08', lane: 'D', number: 8, isOccupied: false, vehicleType: 'car' },
+  // 4. Central Island 3 (Standard Cars)
+  ...generateZoneSlots('C', 'C', 'island-3-top', 16, 'car', 1, 3, 2),
+  ...generateZoneSlots('C', 'C', 'island-3-bottom', 16, 'car', 17, 4, 1),
+
+  // 5. Central Island 4 (Top Row: Standard | Bottom Row: Handicap)
+  ...generateZoneSlots('D', 'D', 'island-4-top', 16, 'car', 1, 3, 1),
+  ...generateZoneSlots('H2', 'Island-4', 'island-4-bottom', 16, 'disabled', 1, 6, 4),
 ];

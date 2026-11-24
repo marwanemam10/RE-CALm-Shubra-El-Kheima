@@ -11,21 +11,18 @@ import {
   MapPin, 
   ArrowDown, 
   ArrowUp, 
+  ArrowRight,
+  ArrowLeft,
   Compass, 
   Sparkles, 
   Clock, 
   ShieldCheck,
-  Check,
-  Info,
-  ChevronLeft,
-  ChevronRight,
-  Timer
+  Check
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useAppThemeLanguage } from '../context/ThemeLanguageContext';
 import { initialParkingSlots, siteImages } from '../data/siteData';
-import { ParkingSlot } from '../types';
-import { Badge } from '../components/ui/Badge';
+import { ParkingSlot, ParkingZone } from '../types';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 
@@ -79,12 +76,15 @@ export const SmartParkingPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [language]);
 
-  // Counters
+  // Live Dashboard Counters
   const totalSlots = slots.length;
-  const occupiedSlots = slots.filter((s) => s.isOccupied && !s.isReservedByUser).length;
   const availableSlots = slots.filter((s) => !s.isOccupied).length;
   const userReservedSlotsList = slots.filter((s) => s.isReservedByUser);
   const userReservedCount = userReservedSlotsList.length;
+  const evAvailableCount = slots.filter((s) => s.vehicleType === 'ev' && !s.isOccupied).length;
+  const evTotalCount = slots.filter((s) => s.vehicleType === 'ev').length;
+  const handicapAvailableCount = slots.filter((s) => s.vehicleType === 'disabled' && !s.isOccupied).length;
+  const handicapTotalCount = slots.filter((s) => s.vehicleType === 'disabled').length;
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -124,7 +124,6 @@ export const SmartParkingPage: React.FC = () => {
 
     const cleanedPlate = licensePlateInput.trim().toUpperCase();
 
-    // Reserve slot with license plate and timestamp
     setSlots((prev) =>
       prev.map((s) =>
         s.id === selectedSlot.id
@@ -139,14 +138,13 @@ export const SmartParkingPage: React.FC = () => {
       )
     );
 
-    // Trigger celebration confetti
     try {
       confetti({
         particleCount: 60,
         spread: 70,
         origin: { y: 0.6 }
       });
-    } catch (e) {
+    } catch {
       // Safe fallback
     }
 
@@ -194,16 +192,105 @@ export const SmartParkingPage: React.FC = () => {
     );
   };
 
-  const getLaneSlots = (lane: 'A' | 'B' | 'C' | 'D') => {
-    return slots.filter((s) => s.lane === lane);
+  const getZoneSlots = (zone: ParkingZone) => {
+    return slots.filter((s) => s.zone === zone);
+  };
+
+  // Shared slot button renderer for horizontal & vertical bays
+  const renderSlotButton = (slot: ParkingSlot, orientation: 'vertical' | 'horizontal' = 'vertical') => {
+    const isAvailable = !slot.isOccupied;
+    const isUserReserved = Boolean(slot.isReservedByUser);
+
+    let stateClasses = '';
+    if (isUserReserved) {
+      stateClasses =
+        'bg-amber-500 border-amber-300 text-black ring-2 ring-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.65)] z-10';
+    } else if (!isAvailable) {
+      stateClasses =
+        'bg-neutral-800/90 border-neutral-700/80 text-neutral-500 opacity-75 hover:opacity-95';
+    } else if (slot.vehicleType === 'ev') {
+      stateClasses =
+        'bg-[#0284c7] hover:bg-[#0369a1] border-[#38bdf8]/80 text-white shadow-sm hover:shadow-[0_0_10px_rgba(56,189,248,0.5)]';
+    } else if (slot.vehicleType === 'disabled') {
+      stateClasses =
+        'bg-[#be123c] hover:bg-[#9f1239] border-[#fb7185]/80 text-white shadow-sm hover:shadow-[0_0_10px_rgba(251,113,133,0.5)]';
+    } else {
+      stateClasses =
+        'bg-emerald-600/85 hover:bg-emerald-500 border-emerald-400/75 text-white shadow-sm hover:shadow-[0_0_10px_rgba(52,211,153,0.45)]';
+    }
+
+    const sizeClasses =
+      orientation === 'horizontal'
+        ? 'w-full min-h-[26px] h-7 sm:h-8 flex-row gap-1 px-1'
+        : 'flex-1 min-w-[26px] min-h-[38px] h-10 sm:h-11 flex-col px-0.5';
+
+    const titleText = isUserReserved
+      ? `${slot.id} | ${slot.licensePlate} (${formatCountdown(slot.reservedAt)})`
+      : `${slot.id} — ${
+          isAvailable
+            ? slot.vehicleType === 'ev'
+              ? t('evCharging')
+              : slot.vehicleType === 'disabled'
+              ? t('disabledAccess')
+              : t('available')
+            : t('occupied')
+        }`;
+
+    return (
+      <motion.button
+        key={slot.id}
+        whileHover={{ scale: 1.08 }}
+        whileTap={{ scale: 0.94 }}
+        onClick={() => handleSlotClick(slot)}
+        title={titleText}
+        aria-label={titleText}
+        className={`relative rounded-[5px] border flex items-center justify-center transition-colors duration-200 ${sizeClasses} ${stateClasses}`}
+      >
+        {isUserReserved ? (
+          <Car className="w-3.5 h-3.5 text-black animate-pulse shrink-0" />
+        ) : !isAvailable ? (
+          <Car className="w-3 h-3 text-neutral-500 shrink-0" />
+        ) : slot.vehicleType === 'ev' ? (
+          <Zap className="w-3.5 h-3.5 text-white fill-white shrink-0" />
+        ) : slot.vehicleType === 'disabled' ? (
+          <Accessibility className="w-3.5 h-3.5 text-white shrink-0" />
+        ) : (
+          <span className="text-[9px] font-black tracking-tighter leading-none opacity-95">
+            {slot.number}
+          </span>
+        )}
+      </motion.button>
+    );
+  };
+
+  // Shared Green Landscaped Median Strip between islands
+  const renderMedianStrip = () => (
+    <div className="w-full h-5 sm:h-6 rounded-md bg-emerald-950/70 border border-emerald-500/45 flex items-center justify-center px-3 my-1 shadow-inner">
+      <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-300 tracking-wide">
+        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+        <span>{language === 'ar' ? 'متاح — مسطح أخضر' : 'Available — Landscaped Median'}</span>
+      </div>
+    </div>
+  );
+
+  // Shared Directional Driving Lane Arrow Strip
+  const renderDrivingLane = (direction: 'right' | 'left') => {
+    const ArrowIcon = direction === 'right' ? ArrowRight : ArrowLeft;
+    return (
+      <div className="w-full py-1 px-4 flex items-center justify-between text-neutral-500/60 select-none">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <ArrowIcon key={i} className="w-3.5 h-3.5" />
+        ))}
+      </div>
+    );
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10 py-6 overflow-x-hidden">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8 py-6 overflow-x-hidden">
       
       {/* Header Banner */}
       <div className="relative rounded-3xl overflow-hidden border border-[#e2dfd8] dark:border-[#33312b] shadow-xl">
-        <div className="relative h-64 sm:h-80 w-full">
+        <div className="relative h-60 sm:h-72 w-full">
           <img
             src={siteImages.parking}
             alt="Smart Parking Shubra El-Kheima"
@@ -212,8 +299,7 @@ export const SmartParkingPage: React.FC = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-[#12110f] via-[#12110f]/75 to-transparent" />
         </div>
 
-        {/* Content Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 text-white space-y-3">
+        <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-10 text-white space-y-2.5 sm:space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#22c55e] text-white shadow-sm flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-white animate-ping" />
@@ -221,23 +307,23 @@ export const SmartParkingPage: React.FC = () => {
             </span>
             <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md text-white flex items-center gap-1.5">
               <Compass className="w-3.5 h-3.5 text-[#acbdad]" />
-              {language === 'ar' ? 'محاكاة هندسية تفاعلية' : 'Interactive Engineering Simulation'}
+              {language === 'ar' ? 'المخطط المعماري المطور' : 'Architectural Zoning Blueprint'}
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight drop-shadow-md">
+          <h1 className="text-2xl sm:text-5xl font-black tracking-tight drop-shadow-md">
             {t('smartParking')}
           </h1>
 
-          <p className="max-w-3xl text-sm text-neutral-300 font-normal leading-relaxed drop-shadow">
+          <p className="max-w-3xl text-xs sm:text-sm text-neutral-300 font-normal leading-relaxed drop-shadow">
             {language === 'ar'
-              ? 'نظام هندسي ذكي لتنظيم حركة انتظار السيارات في شبرا الخيمة. يتيح فحص الحارات لحظياً وحجز الباكيات الشاغرة برقم لوحة السيارة مع عداد تنازلي ذكي 10 دقائق لتأكيد الوصول.'
-              : 'An automated civil engineering parking management system for Shubra El-Kheima. Real-time lane occupancy, license plate booking, and a 10-minute arrival countdown.'}
+              ? 'مخطط هندسي ذكي مقسم إلى نطاق شحن السيارات الكهربائية المحيطي، وباكيات مخصصة لذوي الإعاقة، و4 جزر وسطية للسيارات القياسية مع الحجز الفوري برقم اللوحة.'
+              : 'Engineered smart parking featuring perimeter EV charging bays, dedicated Handicap zones, 4 double-row standard islands, and instant license-plate booking.'}
           </p>
         </div>
       </div>
 
-      {/* Prominent Active Reservation Banner (Shown when user has reserved slots) */}
+      {/* Prominent Active Reservation Banner */}
       <AnimatePresence>
         {userReservedCount > 0 && (
           <div className="space-y-3">
@@ -264,7 +350,7 @@ export const SmartParkingPage: React.FC = () => {
                           {language === 'ar' ? `الباكية ${slot.id}` : `Slot ${slot.id}`}
                         </span>
                         <span className="text-xs text-neutral-500 font-semibold">
-                          ({language === 'ar' ? `حارة ${slot.lane}` : `Lane ${slot.lane}`})
+                          ({slot.vehicleType === 'ev' ? t('evCharging') : slot.vehicleType === 'disabled' ? t('disabledAccess') : t('regularParking')})
                         </span>
                       </div>
                       <div className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 font-medium flex flex-wrap items-center gap-2">
@@ -276,7 +362,6 @@ export const SmartParkingPage: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Countdown Timer & Cancel Action */}
                   <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-3 sm:pt-0 border-amber-500/20">
                     <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-800 dark:text-amber-200">
                       <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 animate-spin-slow shrink-0" />
@@ -306,99 +391,116 @@ export const SmartParkingPage: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Live Dashboard Bar with Real-time Counters */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-        {/* Total Slots */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#1b1a17] border border-[#e2dfd8] dark:border-[#33312b] shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-semibold text-neutral-500 block">
-              {t('totalSlots')}
+      {/* 5 Live Summary Dashboard Counters */}
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-3">
+        {/* 1. Total */}
+        <div className="p-3 sm:p-4 rounded-2xl bg-white dark:bg-[#1b1a17] border border-[#e2dfd8] dark:border-[#33312b] shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-[11px] sm:text-xs font-bold text-neutral-500 truncate">
+              {language === 'ar' ? 'الإجمالي' : 'Total'}
             </span>
-            <span className="text-2xl sm:text-3xl font-black text-[#12110f] dark:text-[#f6f6f4] mt-1 block">
-              {totalSlots}
-            </span>
+            <Car className="w-4 h-4 text-neutral-400 shrink-0" />
           </div>
-          <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-600 dark:text-neutral-400 shrink-0">
-            <Car className="w-5 sm:w-6 h-5 sm:w-6" />
+          <span className="text-xl sm:text-2xl font-black text-[#12110f] dark:text-[#f6f6f4] mt-1">
+            {totalSlots}
+          </span>
+        </div>
+
+        {/* 2. Available */}
+        <div className="p-3 sm:p-4 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/30 shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-[11px] sm:text-xs font-bold text-emerald-800 dark:text-emerald-300 truncate">
+              {language === 'ar' ? 'المتاح' : 'Available'}
+            </span>
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          </div>
+          <span className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">
+            {availableSlots}
+          </span>
+        </div>
+
+        {/* 3. Reserved */}
+        <div className="p-3 sm:p-4 rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-[11px] sm:text-xs font-bold text-amber-800 dark:text-amber-300 truncate">
+              {language === 'ar' ? 'المحجوز' : 'Reserved'}
+            </span>
+            <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+          </div>
+          <span className="text-xl sm:text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">
+            {userReservedCount}
+          </span>
+        </div>
+
+        {/* 4. EV Charging */}
+        <div className="p-3 sm:p-4 rounded-2xl bg-[#0284c7]/10 dark:bg-[#0284c7]/20 border border-[#0284c7]/40 shadow-sm flex flex-col justify-between col-span-1 sm:col-span-1">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-[11px] sm:text-xs font-bold text-[#0369a1] dark:text-[#38bdf8] truncate">
+              {language === 'ar' ? 'سيارات كهربائية' : 'EV Charging'}
+            </span>
+            <Zap className="w-4 h-4 text-[#0284c7] dark:text-[#38bdf8] shrink-0" />
+          </div>
+          <div className="flex items-baseline gap-1 mt-1">
+            <span className="text-xl sm:text-2xl font-black text-[#0284c7] dark:text-[#38bdf8]">
+              {evAvailableCount}
+            </span>
+            <span className="text-[10px] font-bold text-neutral-500">/ {evTotalCount}</span>
           </div>
         </div>
 
-        {/* Available Slots (Emerald Green) */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/30 shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-semibold text-emerald-800 dark:text-emerald-300 block">
-              {t('availableSlots')}
+        {/* 5. Handicap */}
+        <div className="p-3 sm:p-4 rounded-2xl bg-[#be123c]/10 dark:bg-[#be123c]/20 border border-[#be123c]/40 shadow-sm flex flex-col justify-between col-span-2 sm:col-span-1">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-[11px] sm:text-xs font-bold text-[#9f1239] dark:text-[#fb7185] truncate">
+              {language === 'ar' ? 'ذوي الإعاقة' : 'Handicap'}
             </span>
-            <span className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1 block">
-              {availableSlots}
-            </span>
+            <Accessibility className="w-4 h-4 text-[#be123c] dark:text-[#fb7185] shrink-0" />
           </div>
-          <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 flex items-center justify-center shrink-0">
-            <CheckCircle2 className="w-5 sm:w-6 h-5 sm:w-6" />
-          </div>
-        </div>
-
-        {/* Occupied Slots (Coral / Red) */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-rose-500/10 dark:bg-rose-500/15 border border-rose-500/30 shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-semibold text-rose-800 dark:text-rose-300 block">
-              {t('occupiedSlots')}
+          <div className="flex items-baseline gap-1 mt-1">
+            <span className="text-xl sm:text-2xl font-black text-[#be123c] dark:text-[#fb7185]">
+              {handicapAvailableCount}
             </span>
-            <span className="text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-400 mt-1 block">
-              {occupiedSlots}
-            </span>
+            <span className="text-[10px] font-bold text-neutral-500">/ {handicapTotalCount}</span>
           </div>
-          <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-xl bg-rose-500/20 text-rose-600 dark:text-rose-300 flex items-center justify-center shrink-0">
-            <XCircle className="w-5 sm:w-6 h-5 sm:w-6" />
-          </div>
-        </div>
-
-        {/* My Reservations & Reset */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-semibold text-amber-800 dark:text-amber-300 block">
-              {t('myReservations')}
-            </span>
-            <span className="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400 mt-1 block">
-              {userReservedCount}
-            </span>
-          </div>
-          <button
-            onClick={handleResetSimulation}
-            title={t('resetSim')}
-            className="p-2.5 sm:p-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-700 dark:text-amber-300 transition-colors shrink-0"
-          >
-            <RotateCcw className="w-5 h-5" />
-          </button>
         </div>
       </div>
 
-      {/* Legend & Instructions */}
-      <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#1b1a17]/70 border border-[#e2dfd8] dark:border-[#33312b] flex flex-wrap items-center justify-between gap-4 text-xs font-medium">
-        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-md bg-emerald-500 shadow-sm" />
+      {/* Color Legend & Reset Controls */}
+      <div className="p-3.5 sm:p-4 rounded-2xl bg-white/80 dark:bg-[#1b1a17]/80 border border-[#e2dfd8] dark:border-[#33312b] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-semibold">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-1.5">
+            <span className="w-3.5 h-3.5 rounded bg-emerald-600 inline-block shrink-0" />
             <span className="text-neutral-700 dark:text-neutral-300">
-              {t('available')} ({language === 'ar' ? 'اضغط للحجز' : 'Click to Book'})
+              {language === 'ar' ? 'عادي متاح' : 'Standard'}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-md bg-rose-500 shadow-sm" />
-            <span className="text-neutral-700 dark:text-neutral-300">{t('occupied')}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-md bg-amber-500 ring-2 ring-amber-300 shadow-sm animate-pulse" />
+          <div className="flex items-center gap-1.5">
+            <span className="w-3.5 h-3.5 rounded bg-[#0284c7] flex items-center justify-center shrink-0">
+              <Zap className="w-2.5 h-2.5 text-white fill-white" />
+            </span>
             <span className="text-neutral-700 dark:text-neutral-300">
-              {t('reserved')} ({language === 'ar' ? 'مؤقت 10 دقائق' : '10m Temporary'})
+              {language === 'ar' ? 'شحن كهربائي' : 'EV Charging'}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 text-neutral-500 border-l rtl:border-l-0 rtl:border-r border-neutral-300 dark:border-neutral-700 pl-3 rtl:pl-0 rtl:pr-3">
-            <Zap className="w-3.5 h-3.5 text-sky-500" />
-            <span>{t('evCharging')}</span>
+          <div className="flex items-center gap-1.5">
+            <span className="w-3.5 h-3.5 rounded bg-[#be123c] flex items-center justify-center shrink-0">
+              <Accessibility className="w-2.5 h-2.5 text-white" />
+            </span>
+            <span className="text-neutral-700 dark:text-neutral-300">
+              {language === 'ar' ? 'ذوي الإعاقة' : 'Handicap'}
+            </span>
           </div>
-          <div className="flex items-center gap-1.5 text-neutral-500">
-            <Accessibility className="w-3.5 h-3.5 text-purple-500" />
-            <span>{t('disabledAccess')}</span>
+          <div className="flex items-center gap-1.5">
+            <span className="w-3.5 h-3.5 rounded bg-amber-500 ring-2 ring-amber-300 inline-block shrink-0" />
+            <span className="text-neutral-700 dark:text-neutral-300">
+              {language === 'ar' ? 'محجوز لك' : 'Reserved'}
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-3.5 h-3.5 rounded bg-neutral-700 inline-block shrink-0" />
+            <span className="text-neutral-700 dark:text-neutral-300">
+              {t('occupied')}
+            </span>
           </div>
         </div>
 
@@ -407,164 +509,239 @@ export const SmartParkingPage: React.FC = () => {
           size="sm"
           onClick={handleResetSimulation}
           icon={<RotateCcw className="w-3.5 h-3.5" />}
+          className="self-start sm:self-auto"
         >
           {t('resetSim')}
         </Button>
       </div>
 
-      {/* Interactive Architectural Parking Map Layout */}
-      <div className="relative rounded-3xl bg-[#161513] border-2 border-[#36342e] p-4 sm:p-8 shadow-2xl text-white">
+      {/* Interactive Architectural Parking Blueprint Map */}
+      <div className="rounded-3xl bg-[#161513] border-2 border-[#36342e] p-3.5 sm:p-6 shadow-2xl text-white space-y-4">
         
-        {/* Mobile Swipe Hint */}
-        <div className="flex sm:hidden items-center justify-between pb-3 text-xs text-neutral-400 border-b border-neutral-800 mb-4">
+        {/* Mobile Swipe Hint Badge */}
+        <div className="flex md:hidden items-center justify-between gap-2 px-3 py-2 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold">
           <div className="flex items-center gap-1.5">
-            <Compass className="w-3.5 h-3.5 text-[#8e8672]" />
-            <span>{language === 'ar' ? 'مخطط الركن المعماري' : 'Parking Blueprint'}</span>
+            <Compass className="w-4 h-4 shrink-0" />
+            <span>{language === 'ar' ? 'اسحب يميناً ويساراً لاستعراض المخطط' : 'Swipe horizontally to explore map'}</span>
           </div>
-          <div className="flex items-center gap-1 text-amber-400 text-[11px] font-bold">
-            <span>{language === 'ar' ? 'اسحب أفقياً لاستعراض الحارات ⟷' : 'Swipe horizontally ⟷'}</span>
-          </div>
+          <span className="text-sm">⟷</span>
         </div>
 
-        {/* Top Boundary: Entrance Gate from Orabi St. */}
-        <div className="hidden sm:flex items-center justify-between border-b border-dashed border-neutral-700 pb-6 mb-8 text-xs font-bold uppercase tracking-wider text-neutral-400">
-          <div className="flex items-center gap-2 text-emerald-400">
-            <ArrowDown className="w-4 h-4 animate-bounce" />
-            <span>{t('entranceGate')}</span>
-          </div>
-          <div className="flex items-center gap-2 text-[#8e8672]">
-            <Compass className="w-4 h-4" />
-            <span>{language === 'ar' ? 'مخطط الركن المعماري الهندسي - المستوى الأول' : 'Architectural Parking Blueprint - Level 1'}</span>
-          </div>
-          <div className="flex items-center gap-2 text-amber-400">
-            <MapPin className="w-4 h-4" />
-            <span>{t('directToMall')}</span>
-          </div>
-        </div>
+        {/* Scrollable Architectural Blueprint Container (LTR preserves exact CAD geometry) */}
+        <div className="w-full overflow-x-auto pb-3 scrollbar-thin scrollbar-thumb-neutral-700" dir="ltr">
+          <div className="min-w-[740px] md:min-w-full bg-[#1d1c19] rounded-2xl border-2 border-[#3d3a33] p-3 sm:p-4 space-y-2">
+            
+            {/* TOP PERIMETER ROW: EV Charging (Left 16) + Top Entrance/Exit Gap + EV Charging (Right 4) */}
+            <div className="flex items-stretch gap-2">
+              {/* Corner spacer */}
+              <div className="w-9 sm:w-10 shrink-0 rounded-md bg-[#0284c7]/20 border border-[#38bdf8]/30 flex items-center justify-center">
+                <Zap className="w-3.5 h-3.5 text-[#38bdf8]" />
+              </div>
 
-        {/* Scrollable Lanes Container */}
-        <div className="overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-neutral-700">
-          <div className="space-y-8 min-w-[780px]">
-            {(['A', 'B', 'C', 'D'] as const).map((laneLetter) => {
-              const laneSlots = getLaneSlots(laneLetter);
-              return (
-                <div key={laneLetter} className="space-y-2">
-                  {/* Lane Header */}
-                  <div className="flex items-center justify-between text-xs font-bold text-neutral-400 px-2">
-                    <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-lg bg-[#8e8672]/30 text-[#8e8672] flex items-center justify-center font-bold">
-                        {laneLetter}
-                      </span>
-                      <span>{t('lane')} {laneLetter}</span>
-                    </div>
-                    <span className="text-[11px] text-neutral-500">
-                      {laneLetter === 'A' ? (language === 'ar' ? 'الأقرب للمول المفتوح' : 'Closest to Open Air Mall') : ''}
-                      {laneLetter === 'D' ? (language === 'ar' ? 'الأقرب لممر سيتي مول' : 'Closest to City Mall Walkway') : ''}
+              {/* Top Left EV Bays (16) */}
+              <div className="flex-1 flex items-center gap-1">
+                {getZoneSlots('perimeter-top-left').map((slot) => renderSlotButton(slot, 'vertical'))}
+              </div>
+
+              {/* Top Entrance/Exit Gap */}
+              <div className="w-24 sm:w-28 shrink-0 rounded-lg border-2 border-dashed border-emerald-500/50 bg-emerald-500/10 flex flex-col items-center justify-center text-emerald-400 px-1">
+                <div className="flex items-center gap-1">
+                  <ArrowDown className="w-3.5 h-3.5 animate-bounce" />
+                  <ArrowUp className="w-3.5 h-3.5" />
+                </div>
+                <span className="text-[9px] font-black uppercase tracking-wider text-center leading-tight">
+                  {language === 'ar' ? 'مدخل / مخرج' : 'GATE IN/OUT'}
+                </span>
+              </div>
+
+              {/* Top Right EV Bays (4) */}
+              <div className="w-32 sm:w-36 shrink-0 flex items-center gap-1">
+                {getZoneSlots('perimeter-top-right').map((slot) => renderSlotButton(slot, 'vertical'))}
+              </div>
+
+              {/* Corner spacer */}
+              <div className="w-9 sm:w-10 shrink-0 rounded-md bg-[#0284c7]/20 border border-[#38bdf8]/30 flex items-center justify-center">
+                <Zap className="w-3.5 h-3.5 text-[#38bdf8]" />
+              </div>
+            </div>
+
+            {/* MIDDLE BODY: Left EV Column + 4 Central Double-Row Islands + Right EV Column */}
+            <div className="flex items-stretch gap-2 sm:gap-3">
+              
+              {/* Left Vertical Perimeter Column (16 EV Slots) */}
+              <div className="w-9 sm:w-10 shrink-0 flex flex-col justify-between gap-1 py-1">
+                {getZoneSlots('perimeter-left').map((slot) => renderSlotButton(slot, 'horizontal'))}
+              </div>
+
+              {/* Center Area: 4 Double-Row Islands + Medians + Driving Lanes */}
+              <div className="flex-1 flex flex-col justify-between py-1">
+                
+                {/* Driving Lane 1 (Top) */}
+                {renderDrivingLane('right')}
+
+                {/* ISLAND 1: Top Row = Handicap (Red ♿) | Bottom Row = Standard */}
+                <div className="rounded-xl border border-neutral-700/80 bg-neutral-900/70 p-1.5 space-y-1">
+                  <div className="flex items-center justify-between px-1 pb-0.5">
+                    <span className="text-[10px] font-black text-[#fb7185] flex items-center gap-1">
+                      <Accessibility className="w-3 h-3" />
+                      {language === 'ar' ? 'ذوي الإعاقة / Handicap' : 'Handicap / ذوي الإعاقة'}
+                    </span>
+                    <span className="text-[10px] font-bold text-neutral-400">
+                      {language === 'ar' ? 'الجزيرة 1' : 'Island 1'}
                     </span>
                   </div>
-
-                  {/* Slots Grid for this Lane */}
-                  <div className="grid grid-cols-8 gap-3 bg-neutral-900/80 p-4 rounded-2xl border border-neutral-800">
-                    {laneSlots.map((slot) => {
-                      const isAvailable = !slot.isOccupied;
-                      const isUserReserved = slot.isReservedByUser;
-
-                      return (
-                        <motion.button
-                          key={slot.id}
-                          whileHover={{ scale: 1.04 }}
-                          whileTap={{ scale: 0.96 }}
-                          onClick={() => handleSlotClick(slot)}
-                          className={`relative group min-h-[135px] rounded-xl flex flex-col justify-between p-2 sm:p-2.5 transition-all duration-300 border-2 text-left rtl:text-right ${
-                            isUserReserved
-                              ? 'bg-amber-500/20 border-amber-500 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.4)] ring-2 ring-amber-400/50'
-                              : isAvailable
-                              ? 'bg-emerald-950/40 border-emerald-500 hover:bg-emerald-900/50 text-emerald-300 hover:shadow-[0_0_15px_rgba(34,197,94,0.3)]'
-                              : 'bg-rose-950/30 border-rose-600/60 text-rose-300 opacity-90'
-                          }`}
-                        >
-                          {/* Top row: Slot ID & Feature Icon */}
-                          <div className="flex items-center justify-between w-full">
-                            <span className="text-xs font-black tracking-wider">
-                              {slot.id}
-                            </span>
-                            {slot.vehicleType === 'ev' && (
-                              <span title={t('evCharging')}>
-                                <Zap className="w-3.5 h-3.5 text-sky-400 shrink-0" />
-                              </span>
-                            )}
-                            {slot.vehicleType === 'disabled' && (
-                              <span title={t('disabledAccess')}>
-                                <Accessibility className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Center Content: Car or Free P mark + License Plate if reserved */}
-                          <div className="flex flex-col items-center justify-center my-auto w-full gap-1">
-                            {isUserReserved ? (
-                              <>
-                                <Car className="w-7 h-7 text-amber-400 animate-pulse" />
-                                <div className="w-full text-center px-1 py-0.5 rounded bg-black/70 border border-amber-400/50 text-amber-200 font-mono font-bold text-[10px] truncate" title={slot.licensePlate}>
-                                  {slot.licensePlate}
-                                </div>
-                              </>
-                            ) : isAvailable ? (
-                              <div className="w-8 h-8 rounded-full border border-dashed border-emerald-400/60 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
-                                <span className="text-[10px] font-bold">P</span>
-                              </div>
-                            ) : (
-                              <Car className="w-7 h-7 text-rose-500" />
-                            )}
-                          </div>
-
-                          {/* Bottom Row: Status Badge or Live Timer */}
-                          <div className="w-full text-center">
-                            {isUserReserved ? (
-                              <div className="flex items-center justify-center gap-1 text-[10px] font-mono font-black text-amber-300 bg-amber-500/30 px-1 py-0.5 rounded border border-amber-500/30">
-                                <Clock className="w-2.5 h-2.5 animate-spin-slow shrink-0" />
-                                <span>{formatCountdown(slot.reservedAt)}</span>
-                              </div>
-                            ) : (
-                              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded block ${
-                                isAvailable
-                                  ? 'bg-emerald-500/30 text-emerald-300 group-hover:bg-emerald-500 group-hover:text-white transition-colors'
-                                  : 'bg-rose-500/20 text-rose-400'
-                              }`}>
-                                {isAvailable ? t('available') : t('occupied')}
-                              </span>
-                            )}
-                          </div>
-                        </motion.button>
-                      );
-                    })}
+                  <div className="flex items-center gap-1">
+                    {getZoneSlots('island-1-top').map((slot) => renderSlotButton(slot, 'vertical'))}
                   </div>
-
-                  {/* Driving Lane Line Overlay */}
-                  <div className="flex items-center justify-center py-1 opacity-20">
-                    <div className="w-full border-t border-dashed border-white" />
+                  <div className="h-[2px] bg-neutral-700/70 my-0.5" />
+                  <div className="flex items-center gap-1">
+                    {getZoneSlots('island-1-bottom').map((slot) => renderSlotButton(slot, 'vertical'))}
                   </div>
                 </div>
-              );
-            })}
+
+                {renderMedianStrip()}
+                {renderDrivingLane('left')}
+
+                {/* ISLAND 2: Both Rows = Standard */}
+                <div className="rounded-xl border border-neutral-700/80 bg-neutral-900/70 p-1.5 space-y-1">
+                  <div className="flex items-center justify-between px-1 pb-0.5">
+                    <span className="text-[10px] font-bold text-emerald-400">
+                      {language === 'ar' ? 'سيارات قياسية' : 'Standard Parking'}
+                    </span>
+                    <span className="text-[10px] font-bold text-neutral-400">
+                      {language === 'ar' ? 'الجزيرة 2' : 'Island 2'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {getZoneSlots('island-2-top').map((slot) => renderSlotButton(slot, 'vertical'))}
+                  </div>
+                  <div className="h-[2px] bg-neutral-700/70 my-0.5" />
+                  <div className="flex items-center gap-1">
+                    {getZoneSlots('island-2-bottom').map((slot) => renderSlotButton(slot, 'vertical'))}
+                  </div>
+                </div>
+
+                {renderMedianStrip()}
+                {renderDrivingLane('right')}
+
+                {/* ISLAND 3: Both Rows = Standard */}
+                <div className="rounded-xl border border-neutral-700/80 bg-neutral-900/70 p-1.5 space-y-1">
+                  <div className="flex items-center justify-between px-1 pb-0.5">
+                    <span className="text-[10px] font-bold text-emerald-400">
+                      {language === 'ar' ? 'سيارات قياسية' : 'Standard Parking'}
+                    </span>
+                    <span className="text-[10px] font-bold text-neutral-400">
+                      {language === 'ar' ? 'الجزيرة 3' : 'Island 3'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {getZoneSlots('island-3-top').map((slot) => renderSlotButton(slot, 'vertical'))}
+                  </div>
+                  <div className="h-[2px] bg-neutral-700/70 my-0.5" />
+                  <div className="flex items-center gap-1">
+                    {getZoneSlots('island-3-bottom').map((slot) => renderSlotButton(slot, 'vertical'))}
+                  </div>
+                </div>
+
+                {renderMedianStrip()}
+                {renderDrivingLane('left')}
+
+                {/* ISLAND 4: Top Row = Standard | Bottom Row = Handicap (Red ♿) */}
+                <div className="rounded-xl border border-neutral-700/80 bg-neutral-900/70 p-1.5 space-y-1">
+                  <div className="flex items-center justify-between px-1 pb-0.5">
+                    <span className="text-[10px] font-bold text-emerald-400">
+                      {language === 'ar' ? 'سيارات قياسية' : 'Standard Parking'}
+                    </span>
+                    <span className="text-[10px] font-bold text-neutral-400">
+                      {language === 'ar' ? 'الجزيرة 4' : 'Island 4'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {getZoneSlots('island-4-top').map((slot) => renderSlotButton(slot, 'vertical'))}
+                  </div>
+                  <div className="h-[2px] bg-neutral-700/70 my-0.5" />
+                  <div className="flex items-center gap-1">
+                    {getZoneSlots('island-4-bottom').map((slot) => renderSlotButton(slot, 'vertical'))}
+                  </div>
+                  <div className="flex items-center justify-between px-1 pt-0.5">
+                    <span className="text-[10px] font-black text-[#fb7185] flex items-center gap-1">
+                      <Accessibility className="w-3 h-3" />
+                      {language === 'ar' ? 'ذوي الإعاقة / Handicap' : 'Handicap / ذوي الإعاقة'}
+                    </span>
+                  </div>
+                </div>
+
+                {renderMedianStrip()}
+                {renderDrivingLane('right')}
+              </div>
+
+              {/* Right Vertical Perimeter Column (16 EV Slots) */}
+              <div className="w-9 sm:w-10 shrink-0 flex flex-col justify-between gap-1 py-1">
+                {getZoneSlots('perimeter-right').map((slot) => renderSlotButton(slot, 'horizontal'))}
+              </div>
+            </div>
+
+            {/* BOTTOM PERIMETER ROW: Bottom-Left Entry/Exit + EV Charging (14) + Bottom-Right Entry/Exit */}
+            <div className="space-y-1.5">
+              <div className="flex items-stretch gap-2">
+                {/* Corner spacer */}
+                <div className="w-9 sm:w-10 shrink-0 rounded-md bg-[#0284c7]/20 border border-[#38bdf8]/30 flex items-center justify-center">
+                  <Zap className="w-3.5 h-3.5 text-[#38bdf8]" />
+                </div>
+
+                {/* Bottom Left Entry/Exit Gap */}
+                <div className="w-20 sm:w-24 shrink-0 rounded-lg border-2 border-dashed border-rose-500/50 bg-rose-500/10 flex flex-col items-center justify-center text-rose-400 px-1">
+                  <ArrowUp className="w-3.5 h-3.5" />
+                  <span className="text-[8px] font-black uppercase tracking-wider text-center">
+                    {language === 'ar' ? 'خروج / دخول' : 'EXIT / IN'}
+                  </span>
+                </div>
+
+                {/* Bottom EV Charging Bays (14) */}
+                <div className="flex-1 flex items-center gap-1">
+                  {getZoneSlots('perimeter-bottom').map((slot) => renderSlotButton(slot, 'vertical'))}
+                </div>
+
+                {/* Bottom Right Entry/Exit Gap */}
+                <div className="w-20 sm:w-24 shrink-0 rounded-lg border-2 border-dashed border-emerald-500/50 bg-emerald-500/10 flex flex-col items-center justify-center text-emerald-400 px-1">
+                  <ArrowDown className="w-3.5 h-3.5" />
+                  <span className="text-[8px] font-black uppercase tracking-wider text-center">
+                    {language === 'ar' ? 'دخول / خروج' : 'IN / EXIT'}
+                  </span>
+                </div>
+
+                {/* Corner spacer */}
+                <div className="w-9 sm:w-10 shrink-0 rounded-md bg-[#0284c7]/20 border border-[#38bdf8]/30 flex items-center justify-center">
+                  <Zap className="w-3.5 h-3.5 text-[#38bdf8]" />
+                </div>
+              </div>
+
+              {/* Bottom EV Charging Label Banner */}
+              <div className="flex items-center justify-center">
+                <div className="px-4 py-1 rounded-full bg-[#0284c7]/25 border border-[#38bdf8]/50 text-[#38bdf8] text-[11px] font-black flex items-center gap-1.5 shadow-sm">
+                  <Zap className="w-3.5 h-3.5 fill-[#38bdf8]" />
+                  <span>{language === 'ar' ? 'شحن كهربائي / EV Charging' : 'EV Charging / شحن كهربائي'}</span>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
-        {/* Bottom Boundary: Exit Gate & Pedestrian Mall Walkway */}
-        <div className="flex flex-col sm:flex-row items-center justify-between border-t border-dashed border-neutral-700 pt-6 mt-8 text-xs font-bold uppercase tracking-wider text-neutral-400 gap-3 text-center sm:text-left rtl:sm:text-right">
-          <div className="flex items-center gap-2 text-rose-400">
-            <ArrowUp className="w-4 h-4" />
-            <span>{t('exitGate')}</span>
+        {/* Footer Info Bar */}
+        <div className="flex flex-col sm:flex-row items-center justify-between border-t border-dashed border-neutral-700 pt-4 text-xs font-bold text-neutral-400 gap-2 text-center sm:text-left rtl:sm:text-right">
+          <div className="flex items-center gap-2 text-emerald-400">
+            <MapPin className="w-4 h-4 shrink-0" />
+            <span>{t('directToMall')}</span>
           </div>
           <div className="text-[11px] text-neutral-400">
             {language === 'ar' ? 'سرعة السير القصوى داخل الحارات: 10 كم/س' : 'Max Lane Speed: 10 km/h'}
           </div>
           <div className="flex items-center gap-2 text-sky-400">
-            <ShieldCheck className="w-4 h-4" />
+            <ShieldCheck className="w-4 h-4 shrink-0" />
             <span>{language === 'ar' ? 'كاميرات مراقبة وحماية أمنية 24/7' : '24/7 Monitored & Secured'}</span>
           </div>
         </div>
-
       </div>
 
       {/* Interactive Slot Booking & Inspection Modal */}
@@ -574,7 +751,13 @@ export const SmartParkingPage: React.FC = () => {
         title={
           selectedSlot ? (
             <div className="flex items-center gap-2">
-              <Car className="w-5 h-5 text-[#8e8672]" />
+              {selectedSlot.vehicleType === 'ev' ? (
+                <Zap className="w-5 h-5 text-[#0284c7]" />
+              ) : selectedSlot.vehicleType === 'disabled' ? (
+                <Accessibility className="w-5 h-5 text-[#be123c]" />
+              ) : (
+                <Car className="w-5 h-5 text-[#8e8672]" />
+              )}
               <span>
                 {selectedSlot.isReservedByUser
                   ? (language === 'ar' ? `تفاصيل حجز الباكية ${selectedSlot.id}` : `Slot ${selectedSlot.id} Reservation`)
@@ -593,13 +776,23 @@ export const SmartParkingPage: React.FC = () => {
               selectedSlot.isReservedByUser
                 ? 'bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-300'
                 : !selectedSlot.isOccupied
-                ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300'
+                ? selectedSlot.vehicleType === 'ev'
+                  ? 'bg-[#0284c7]/15 border border-[#0284c7]/30 text-[#0369a1] dark:text-[#38bdf8]'
+                  : selectedSlot.vehicleType === 'disabled'
+                  ? 'bg-[#be123c]/15 border border-[#be123c]/30 text-[#9f1239] dark:text-[#fb7185]'
+                  : 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300'
                 : 'bg-rose-500/15 border border-rose-500/30 text-rose-800 dark:text-rose-300'
             }`}>
               {selectedSlot.isReservedByUser ? (
                 <Sparkles className="w-6 h-6 text-amber-500 shrink-0" />
               ) : !selectedSlot.isOccupied ? (
-                <CheckCircle2 className="w-6 h-6 text-emerald-500 shrink-0" />
+                selectedSlot.vehicleType === 'ev' ? (
+                  <Zap className="w-6 h-6 text-[#0284c7] shrink-0" />
+                ) : selectedSlot.vehicleType === 'disabled' ? (
+                  <Accessibility className="w-6 h-6 text-[#be123c] shrink-0" />
+                ) : (
+                  <CheckCircle2 className="w-6 h-6 text-emerald-500 shrink-0" />
+                )
               ) : (
                 <XCircle className="w-6 h-6 text-rose-500 shrink-0" />
               )}
@@ -612,31 +805,14 @@ export const SmartParkingPage: React.FC = () => {
                     : (language === 'ar' ? 'الباكية مشغولة حالياً بسيارة أخرى' : 'Slot is currently occupied by another vehicle')}
                 </div>
                 <div className="text-xs opacity-90 mt-0.5">
-                  {t('lane')} {selectedSlot.lane} - {selectedSlot.vehicleType === 'ev' ? t('evCharging') : selectedSlot.vehicleType === 'disabled' ? t('disabledAccess') : t('regularParking')}
+                  {selectedSlot.lane} — {selectedSlot.vehicleType === 'ev' ? t('evCharging') : selectedSlot.vehicleType === 'disabled' ? t('disabledAccess') : t('regularParking')}
                 </div>
-              </div>
-            </div>
-
-            {/* Quick walk details */}
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="p-3 rounded-xl bg-neutral-100 dark:bg-neutral-800/60 border border-neutral-200/50 dark:border-neutral-700/50">
-                <span className="text-neutral-500 block">{language === 'ar' ? 'المسافة للمول المفتوح:' : 'Walk to Open Air Mall:'}</span>
-                <span className="font-bold text-[#12110f] dark:text-white mt-1 block">
-                  {selectedSlot.lane === 'A' ? (language === 'ar' ? '1 دقيقة (مباشر)' : '1 min (Direct)') : '2-3 دقائق'}
-                </span>
-              </div>
-              <div className="p-3 rounded-xl bg-neutral-100 dark:bg-neutral-800/60 border border-neutral-200/50 dark:border-neutral-700/50">
-                <span className="text-neutral-500 block">{language === 'ar' ? 'المسافة لسيتي مول:' : 'Walk to City Mall:'}</span>
-                <span className="font-bold text-[#12110f] dark:text-white mt-1 block">
-                  {selectedSlot.lane === 'D' ? (language === 'ar' ? '2 دقيقة (مباشر)' : '2 mins (Direct)') : '3-4 دقائق'}
-                </span>
               </div>
             </div>
 
             {/* Available Slot: License Plate Input Form & 10-Minute Policy Alert */}
             {!selectedSlot.isOccupied && (
               <form onSubmit={handleConfirmReservation} className="space-y-4">
-                {/* License Plate Input Field */}
                 <div className="space-y-1.5">
                   <label className="block text-xs sm:text-sm font-bold text-neutral-800 dark:text-neutral-200">
                     {language === 'ar' ? 'رقم لوحة السيارة' : 'Car License Plate Number'}{' '}
@@ -681,7 +857,6 @@ export const SmartParkingPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Modal Actions */}
                 <div className="pt-2 flex flex-col sm:flex-row items-center justify-end gap-2.5">
                   <Button
                     type="button"
@@ -705,7 +880,7 @@ export const SmartParkingPage: React.FC = () => {
               </form>
             )}
 
-            {/* Already Reserved by User: Show Plate, Remaining Timer & Cancel Button */}
+            {/* Already Reserved by User */}
             {selectedSlot.isReservedByUser && (
               <div className="space-y-4">
                 <div className="p-4 rounded-2xl bg-neutral-100 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 space-y-3">
@@ -725,13 +900,6 @@ export const SmartParkingPage: React.FC = () => {
                       {formatCountdown(selectedSlot.reservedAt)}
                     </span>
                   </div>
-                </div>
-
-                {/* 10-Minute Policy Reminder */}
-                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-800 dark:text-amber-300">
-                  {language === 'ar'
-                    ? 'يرجى التوجه لبوابة الدخول قبل انتهاء العداد لتجنب إلغاء الحجز تلقائياً.'
-                    : 'Please proceed to the entrance before the timer expires to prevent automatic cancellation.'}
                 </div>
 
                 <div className="pt-2 flex flex-col sm:flex-row items-center justify-end gap-2.5">
@@ -754,7 +922,7 @@ export const SmartParkingPage: React.FC = () => {
               </div>
             )}
 
-            {/* Occupied Slot by Others: View Only */}
+            {/* Occupied Slot by Others */}
             {selectedSlot.isOccupied && !selectedSlot.isReservedByUser && (
               <div className="space-y-4">
                 <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
