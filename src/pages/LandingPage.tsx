@@ -21,6 +21,7 @@ import {
   Lightbulb,
   AlertTriangle,
   User,
+  Users,
   Phone,
   MessageSquare,
   Check
@@ -43,6 +44,17 @@ export const LandingPage: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formErrors, setFormErrors] = useState<{ name?: string; mobile?: string; message?: string }>({});
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [teamImgIdx, setTeamImgIdx] = useState(0);
+  const [teamImgFailed, setTeamImgFailed] = useState(false);
+
+  const teamImageCandidates = [
+    '/new image/our team.jpeg',
+    '/new image/our team.jpg',
+    '/new image/team.jpg',
+    '/new image/فريق العمل.jpg',
+    '/new image/our_team.png',
+    '/new image/our team.webp',
+  ];
 
   const handleCardClick = (id: string) => {
     setActiveView(id as NavView);
@@ -727,6 +739,101 @@ export const LandingPage: React.FC = () => {
               </div>
             </div>
 
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Our Team Section */}
+      <section id="our-team-section" className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 overflow-x-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="rounded-3xl bg-white dark:bg-[#1b1a17] border border-[#e2dfd8] dark:border-[#33312b] shadow-xl p-5 sm:p-8 lg:p-12 space-y-8"
+        >
+          {/* Header */}
+          <div className="text-center max-w-2xl mx-auto space-y-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#8e8672]/15 text-[#6c6554] dark:bg-[#8e8672]/25 dark:text-[#d0c8bd] text-xs font-bold">
+              <Users className="w-4 h-4 text-[#8e8672] dark:text-[#acbdad]" />
+              <span>{language === 'ar' ? 'فريق العمل' : 'Our Team'}</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#12110f] dark:text-[#f6f6f4] tracking-tight">
+              {language === 'ar'
+                ? 'رؤيتنا الهندسية لإعادة تصميم وتطوير المنطقة'
+                : 'Our Engineering Vision for Area Redesign & Urban Redevelopment'}
+            </h2>
+          </div>
+
+          {/* Framed Architectural Team Photo Showcase */}
+          <div className="w-full max-w-3xl mx-auto rounded-2xl overflow-hidden border border-[#e2dfd8] dark:border-[#33312b] bg-neutral-100 dark:bg-neutral-800 shadow-md">
+            {teamImgFailed ? (
+              <div className="w-full aspect-[4/3] sm:aspect-[16/9] flex flex-col items-center justify-center text-neutral-400 gap-2 p-6">
+                <Users className="w-12 h-12 opacity-50" />
+                <span className="text-sm font-semibold">
+                  {language === 'ar' ? 'فريق العمل الهندسي — مشروع شبرا الخيمة' : 'Engineering Team — Shubra El-Kheima Project'}
+                </span>
+              </div>
+            ) : (
+              <img
+                src={encodeURI(teamImageCandidates[teamImgIdx])}
+                alt={language === 'ar' ? 'فريق العمل الهندسي' : 'Our Engineering Team'}
+                onError={() => {
+                  if (teamImgIdx + 1 < teamImageCandidates.length) {
+                    setTeamImgIdx((prev) => prev + 1);
+                  } else {
+                    setTeamImgFailed(true);
+                  }
+                }}
+                className="w-full aspect-[4/3] sm:aspect-[16/9] object-cover object-center"
+              />
+            )}
+          </div>
+
+          {/* Engineering & Urban Redevelopment Narrative */}
+          <div className="max-w-4xl mx-auto rounded-2xl bg-[#f6f6f4] dark:bg-[#141311] border border-[#e2dfd8] dark:border-[#2d2b26] p-5 sm:p-8 space-y-4">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#8e8672] dark:text-[#acbdad]">
+              <Compass className="w-4 h-4 shrink-0" />
+              <span>
+                {language === 'ar' ? 'نظرة هندسية وتخطيط عمراني' : 'Architectural & Civil Engineering Perspective'}
+              </span>
+            </div>
+
+            {language === 'ar' ? (
+              <div className="space-y-4 text-sm sm:text-base text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                <p>
+                  انطلاقاً من دراستنا الهندسية لتحديات التكدس المروري والعشوائية العمرانية في منطقة شبرا الخيمة، قام فريقنا بإعادة تخطيط وتصميم المنطقة بالكامل وفق رؤية هندسية متكاملة تهدف إلى تحقيق السيولة المرورية، والاستغلال الأمثل للمساحات، ورفع كفاءة البنية التحتية والخدمات:
+                </p>
+                <ul className="space-y-2.5 list-disc pr-5">
+                  <li>
+                    <strong className="text-[#12110f] dark:text-white">إعادة تخطيط الحركة المرورية ومواقف الانتظار:</strong> تصميم ساحة انتظار ذكية (Smart Parking) بسعة 140 باكية وفق معايير هندسة المرور، مع فصل مسارات الدخول والخروج وتحديد اتجاهات السير لمنع التكدس، وتخصيص مناطق واضحة لشحن السيارات الكهربائية وباكيات مجهزة لذوي الإعاقة.
+                  </li>
+                  <li>
+                    <strong className="text-[#12110f] dark:text-white">التكامل الوظيفي للمنشآت (Zoning &amp; Land Use):</strong> ربط المناطق التجارية والترفيهية المفتوحة (Open Air Mall و City Mall) مع المراكز الطبية المتخصصة (برج الأطباء) والمشروعات المستقبلية (Hero Plaza Mall) في نسيج عمراني متجانس يسهل الوصول إليه.
+                  </li>
+                  <li>
+                    <strong className="text-[#12110f] dark:text-white">تطوير محاور النقل العام:</strong> إعادة تنظيم نقاط التقاء خطوط المواصلات (موقفي بهتيم وعرابي) لربط المنطقة بشبكة الطرق الرئيسية والمحاور الحيوية بكفاءة وأمان للمشاة والمركبات.
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              <div className="space-y-4 text-sm sm:text-base text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                <p>
+                  Driven by an engineering assessment of traffic congestion and urban density in Shubra El-Kheima, our engineering team redesigned and master-planned the area through an integrated urban and civil engineering approach focused on traffic fluidity, optimal land-use zoning, and upgraded infrastructure:
+                </p>
+                <ul className="space-y-2.5 list-disc pl-5">
+                  <li>
+                    <strong className="text-[#12110f] dark:text-white">Traffic Engineering &amp; Smart Parking Layout:</strong> Engineered a 140-bay parking facility with separated entry/exit gates, clear one-way circulation lanes, dedicated EV charging perimeter zones, and accessible bays for people with disabilities.
+                  </li>
+                  <li>
+                    <strong className="text-[#12110f] dark:text-white">Functional Urban Zoning:</strong> Integrated open-air recreational spaces (Open Air Mall) and commercial hubs (City Mall &amp; Hero Plaza Mall) with specialized healthcare facilities (Doctors&apos; Towers) to create a cohesive, accessible urban fabric.
+                  </li>
+                  <li>
+                    <strong className="text-[#12110f] dark:text-white">Public Transit Hub Optimization:</strong> Reorganized key transit nodes (Bahtim and Orabi stations) to connect the district seamlessly with major arterial roads while ensuring pedestrian safety and smooth vehicle flow.
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         </motion.div>
       </section>
