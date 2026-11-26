@@ -579,13 +579,18 @@ export const SmartParkingPage: React.FC = () => {
                 {/* Driving Lane 1 (Top) */}
                 {renderDrivingLane('right')}
 
-                {/* ISLAND 1: Top Row = Handicap (Red ♿) | Bottom Row = Standard */}
+                {/* ISLAND 1: Top Row = 4 Handicap (Red ♿) + 12 Standard | Bottom Row = 16 Standard */}
                 <div className="rounded-xl border border-neutral-700/80 bg-neutral-900/70 p-1.5 space-y-1">
                   <div className="flex items-center justify-between px-1 pb-0.5">
-                    <span className="text-[10px] font-black text-[#fb7185] flex items-center gap-1">
-                      <Accessibility className="w-3 h-3" />
-                      {language === 'ar' ? 'ذوي الإعاقة / Handicap' : 'Handicap / ذوي الإعاقة'}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-black text-[#fb7185] flex items-center gap-1">
+                        <Accessibility className="w-3 h-3" />
+                        {language === 'ar' ? 'ذوي الإعاقة (4) / Handicap' : 'Handicap (4) / ذوي الإعاقة'}
+                      </span>
+                      <span className="text-[10px] font-bold text-emerald-400">
+                        {language === 'ar' ? '• سيارات قياسية' : '• Standard Cars'}
+                      </span>
+                    </div>
                     <span className="text-[10px] font-bold text-neutral-400">
                       {language === 'ar' ? 'الجزيرة 1' : 'Island 1'}
                     </span>
@@ -664,10 +669,15 @@ export const SmartParkingPage: React.FC = () => {
                     {getZoneSlots('island-4-bottom').map((slot) => renderSlotButton(slot, 'vertical'))}
                   </div>
                   <div className="flex items-center justify-between px-1 pt-0.5">
-                    <span className="text-[10px] font-black text-[#fb7185] flex items-center gap-1">
-                      <Accessibility className="w-3 h-3" />
-                      {language === 'ar' ? 'ذوي الإعاقة / Handicap' : 'Handicap / ذوي الإعاقة'}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-black text-[#fb7185] flex items-center gap-1">
+                        <Accessibility className="w-3 h-3" />
+                        {language === 'ar' ? 'ذوي الإعاقة (4) / Handicap' : 'Handicap (4) / ذوي الإعاقة'}
+                      </span>
+                      <span className="text-[10px] font-bold text-emerald-400">
+                        {language === 'ar' ? '• سيارات قياسية' : '• Standard Cars'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 

@@ -1119,8 +1119,9 @@ export const initialParkingSlots: ParkingSlot[] = [
   ...generateZoneSlots('EV-R', 'EV-East', 'perimeter-right', 16, 'ev', 1, 5, 1),
   ...generateZoneSlots('EV-B', 'EV-South', 'perimeter-bottom', 14, 'ev', 1, 5, 3),
 
-  // 2. Central Island 1 (Top Row: Handicap | Bottom Row: Standard)
-  ...generateZoneSlots('H1', 'Island-1', 'island-1-top', 16, 'disabled', 1, 6, 2),
+  // 2. Central Island 1 (Top Row: 4 Handicap at start + 12 Standard | Bottom Row: 16 Standard)
+  ...generateZoneSlots('H1', 'Island-1', 'island-1-top', 4, 'disabled', 1, 0, 0),
+  ...generateZoneSlots('A1', 'Island-1', 'island-1-top', 12, 'car', 5, 3, 1),
   ...generateZoneSlots('A', 'A', 'island-1-bottom', 16, 'car', 1, 3, 1),
 
   // 3. Central Island 2 (Standard Cars)
@@ -1131,7 +1132,8 @@ export const initialParkingSlots: ParkingSlot[] = [
   ...generateZoneSlots('C', 'C', 'island-3-top', 16, 'car', 1, 3, 2),
   ...generateZoneSlots('C', 'C', 'island-3-bottom', 16, 'car', 17, 4, 1),
 
-  // 5. Central Island 4 (Top Row: Standard | Bottom Row: Handicap)
+  // 5. Central Island 4 (Top Row: 16 Standard | Bottom Row: 4 Handicap at start + 12 Standard)
   ...generateZoneSlots('D', 'D', 'island-4-top', 16, 'car', 1, 3, 1),
-  ...generateZoneSlots('H2', 'Island-4', 'island-4-bottom', 16, 'disabled', 1, 6, 4),
+  ...generateZoneSlots('H2', 'Island-4', 'island-4-bottom', 4, 'disabled', 1, 0, 0),
+  ...generateZoneSlots('D2', 'Island-4', 'island-4-bottom', 12, 'car', 5, 4, 2),
 ];

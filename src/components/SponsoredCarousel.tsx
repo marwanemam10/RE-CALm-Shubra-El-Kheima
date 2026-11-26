@@ -174,6 +174,23 @@ export const SponsoredCarousel: React.FC<SponsoredCarouselProps> = ({
                     <span className="px-2 py-0.5 rounded-md text-[11px] font-medium bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20">
                       {language === 'ar' ? 'طبيب معتمد وموصى به' : 'Verified Consultant'}
                     </span>
+                    {/* Prominent Star Rating Badge */}
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-200 text-xs font-bold">
+                      <div className="flex items-center gap-0.5">
+                        {Array.from({ length: 5 }).map((_, starIdx) => (
+                          <Star
+                            key={starIdx}
+                            className="w-3 h-3 fill-amber-400 text-amber-400"
+                          />
+                        ))}
+                      </div>
+                      <span>{doctor.rating || 4.9}</span>
+                      {doctor.reviewCount && (
+                        <span className="text-[10px] opacity-80 font-medium">
+                          ({doctor.reviewCount})
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div>
